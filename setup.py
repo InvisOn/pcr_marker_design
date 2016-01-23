@@ -11,7 +11,8 @@ setuptools.setup(
     description="Tools for PCR assay design from NGS variant data",
     long_description=open('README.rst').read(),
 
-    packages=setuptools.find_packages(),
+    #packages=setuptools.find_packages()
+    packages=['pcr_marker_design', 'test'],
 
     install_requires=[],
 
