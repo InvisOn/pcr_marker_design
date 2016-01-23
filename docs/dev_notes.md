@@ -1,12 +1,19 @@
 # Notes on Project and Development Environment
 
+** Go with Python >= 3.4**
+
+ Install miniconda3 http://conda.pydata.org/miniconda.html
+
+
+
 Should use Bioconda channel to simplify install of tabix & bedtools.
 See http://daler.github.io/pybedtools/main.html#quick-install-via-conda
 
-Add this channels to our .condarc
+Add this channels to our .condarc and upgrade pip to stop nags
 
 ```
 conda config --add channels 'bioconda'
+pip install --upgrade pip
 ```
 
 Python version
@@ -21,11 +28,10 @@ To simplify install of bedtools dependencies and Jupyter
 initiated Python 3 env with these, then
 
 ```
-conda create -n py3markers  bedtools jupyter python=3
+conda create -y -n py3markers  bedtools jupyter pyvcf
 source activate py3markers
 pip install primer3-py pybedtools
-pip install --upgrade pip
-conda install pyvcf
+
 ```
 Listed packages to export file
 ---------
