@@ -1,3 +1,6 @@
+import run_p3  
+
+
 p3_test_out=[{'PRIMER_LEFT': (46, 21),
   'PRIMER_LEFT_SEQUENCE': 'GCATCAGTGAGTACAGCATGC',
   'PRIMER_RIGHT': (132, 20),
