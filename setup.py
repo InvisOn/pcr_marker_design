@@ -1,20 +1,16 @@
 import setuptools
 
 setuptools.setup(
-    name="pcr-marker-design",
+    name="pcr_marker_design",
     version="0.1.0",
     url="https://github.com/PlantandFoodResearch/pcr-marker-design",
-
     author="John McCallum",
     author_email="john.mccallum@plantandfood.co.nz",
-
     description="Tools for PCR assay design from NGS variant data",
     long_description=open('README.rst').read(),
-
     #packages=setuptools.find_packages()
     packages=['pcr_marker_design', 'test'],
-
-    install_requires=[],
+    install_requires=['primer3-py','setuptools','pytest',],
 
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',

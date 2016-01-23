@@ -1,3 +1,4 @@
+import pytest
 from pcr_marker_design import run_p3 as P3
 
 
@@ -56,3 +57,6 @@ p3_test_globals={
     }
 def test_run_P3():
     assert(P3.run_P3(p3_test_seq,p3_test_globals)==p3_test_out)
+
+if __name__ == '__main__':
+    pytest.main()
