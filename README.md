@@ -4,9 +4,11 @@ title: 'pcr-marker-design'
 
 [![Latest PyPI version](https://img.shields.io/pypi/v/pcr-marker-design.svg)](https://pypi.python.org/pypi/pcr-marker-design)
 
-[![Latest Travis CI build status](https://travis-ci.org/borntyping/cookiecutter-pypackage-minimal.png)](https://travis-ci.org/borntyping/cookiecutter-pypackage-minimal)
 
-Tools for PCR assay design from NGS variant data
+
+# Tools for PCR assay design from NGS variant data
+
+Galaxy-free refactoring of https://github.com/cfljam/galaxy-pcr-markers
 
 Usage
 =====
@@ -14,8 +16,12 @@ Usage
 Installation
 ============
 
+See ./docs/dev_notes.md
+
 Requirements
 ------------
+
+Python 3
 
 Compatibility
 =============
