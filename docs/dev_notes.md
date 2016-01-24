@@ -4,7 +4,9 @@
 
  Install miniconda3 http://conda.pydata.org/miniconda.html
 
+Worth taking a look at http://www-huber.embl.de/HTSeq/doc/index.html
 
+http://dx.doi.org/10.1093/bioinformatics/btu638
 
 Should use Bioconda channel to simplify install of tabix & bedtools.
 See http://daler.github.io/pybedtools/main.html#quick-install-via-conda
