@@ -1,3 +1,7 @@
+import pytest
+from pcr_marker_design import run_p3 as P3
+
+
 p3_test_out=[{'PRIMER_LEFT': (46, 21),
   'PRIMER_LEFT_SEQUENCE': 'GCATCAGTGAGTACAGCATGC',
   'PRIMER_RIGHT': (132, 20),
@@ -52,4 +56,7 @@ p3_test_globals={
         'PRIMER_PRODUCT_SIZE_RANGE': [[75,100],[100,125],[125,150],[150,175],[175,200],[200,225]],
     }
 def test_run_P3():
-    assert(run_P3(p3_test_seq,p3_test_globals)==p3_test_out)
+    assert(P3.run_P3(p3_test_seq,p3_test_globals)==p3_test_out)
+
+if __name__ == '__main__':
+    pytest.main()
