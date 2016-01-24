@@ -16,7 +16,7 @@ timeout_sec=500 ## default for timeout
 def getmelt(input_seq):
     values = {'seq' : input_seq, 'rs':0, 'dmso':0,'cation': 20 ,'mg': 2} # Note the buffer conditions
     data = urllib.parse.urlencode(values)
-    req = urllib.request.Request(url, data)
+    req = urllib.request.Request(url, data.encode('utf-8'))
     try:
         response = urllib.request.urlopen(req,timeout=timeout_sec)
     except urllib.error.HTTPError as e:
