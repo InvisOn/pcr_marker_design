@@ -11,7 +11,7 @@ http://dx.doi.org/10.1093/bioinformatics/btu638
 Should use Bioconda channel to simplify install of tabix & bedtools.
 See http://daler.github.io/pybedtools/main.html#quick-install-via-conda
 
-Add this channels to our .condarc and upgrade pip to stop nags
+Add this channel to our .condarc and upgrade pip to stop nags
 
 ```
 conda config --add channels 'bioconda'
@@ -47,3 +47,8 @@ To regenerate Environment
 ```
 conda create -n py3markers --file conda-package-list.txt
 ```
+
+umelt
+=====
+
+See web app at https://www.dna.utah.edu/umelt/um.php
