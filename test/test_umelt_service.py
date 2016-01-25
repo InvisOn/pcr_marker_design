@@ -1,5 +1,13 @@
+## Test uMelt functionality
+
+## Really need a function to test if umelt service is
+## a) working
+## b) working as expected
+
+## mocks to allow routine testing, assuming it is working
+
 import pytest
-imort numpy as np
+import numpy as np
 from pcr_marker_design import umelt_service as um
 
 test_seq="TATAACCTGACTAACCATGAACCTGGGTAGAATTCCACTCCTCCACCAAATTTTTTAACTTAACCAAG"
@@ -31,3 +39,6 @@ test_seq_hels=np.array([  9.73479996e+01,   9.72409973e+01,   9.71320038e+01,
 
 def test_getmelt():
     assert(np.equal(um.getmelt(test_seq),test_seq_hels).all())
+
+if __name__ == '__main__':
+        pytest.main()
