@@ -52,3 +52,5 @@ umelt
 =====
 
 See web app at https://www.dna.utah.edu/umelt/um.php
+
+Might be worth a look at http://biopython.org/DIST/docs/api/Bio.SeqUtils.MeltingTemp-module.html
