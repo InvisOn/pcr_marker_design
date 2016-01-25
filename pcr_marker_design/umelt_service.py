@@ -14,9 +14,11 @@ timeout_sec=500 ## default for timeout
 
 # Query UW melt prediction service for a single sequence, returning default array for helicity, assuming within temperature range of 65-95
 def getmelt(input_seq):
+    #Form and encode the request
     values = {'seq' : input_seq, 'rs':0, 'dmso':0,'cation': 20 ,'mg': 2} # Note the buffer conditions
     data = urllib.parse.urlencode(values)
     req = urllib.request.Request(url, data.encode('utf-8'))
+    #Make the request
     try:
         response = urllib.request.urlopen(req,timeout=timeout_sec)
     except urllib.error.HTTPError as e:
@@ -26,6 +28,7 @@ def getmelt(input_seq):
         print('We failed to reach a server.', file=sys.stderr)
         print('Reason: ', e.reason, file=sys.stderr)
     else:
+        #Parse the response
         melt_data = response.read()
         tree = ET.fromstring(melt_data)
         helicity = [amp.find('helicity').text.split() for amp in tree.findall('amplicon')]
