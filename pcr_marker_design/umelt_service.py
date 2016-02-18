@@ -47,16 +47,42 @@ class HelicityInfo:
     data.
     """
     
-    def __init__(self, helicity_array,
-                 temperature_range = np.arange(65, 100.5, 0.5)):
-        self.helicity = helicity_array
+    def __init__(self, helicity_array, temperature_range = None,
+                 min_temp = 65, max_temp = 100.5):
+        """Create a HelicityInfo object.
+        
+        helicity_array is a numpy array of
+        y data in a temperature vs. helicity
+        % chart.
+        temperature_range is an optional
+        numpy array of x data in a
+        temperature vs. helicity % chart.
+        If temperature_range is not given,
+        one will be 
+        """
+        
+        self.helicity_data = helicity_array
+        
+        self.min_temp = min_temp
+        self.max_temp = max_temp
+        
+        if temperature_range == None:
+            temperature_range = np.linspace(self.min_temp, self.max_temp,
+                                            self.helicity_data.size)
+        
         self.temperature_range = temperature_range
     
     def get_melting_temp(self):
         # interpolate as a spline
         # to increase resolution
-        tck = interpolate.splrep(self.temperature_range, self.helicity, s = 0)
-        xnew = np.arange(65, 95, 0.05)
+        # s = 0 means no smoothing
+        # just straight interpolation
+        tck = interpolate.splrep(self.temperature_range, self.helicity_data,
+                                 s = 0)
+        # make some new x points with 10 times
+        # the resolution of our original points
+        xnew = np.linspace(self.min_temp, self.max_temp,
+                           self.helicity_data.size * 10)
         # first derivative of the line
         ynew_derivative = interpolate.splev(xnew, tck, der = 1)
         
@@ -94,7 +120,10 @@ class UmeltService:
         # TODO: add in error handling
         
         response = requests.get(self.url, params = values,
-                                timeout = self.timeout)
+                                timeout = self.timeout,
+                                verify = False)
+        # TODO: replace 'verify = False' with something
+        # that's not a massive security hole
         
         return response
     
@@ -112,3 +141,20 @@ class UmeltService:
         helicity_info = HelicityInfo(helicity_array, temperature_range)
         
         return helicity_info
+
+
+def getmelt(input_seq):
+    """A copy of the original getmelt function.
+    
+    This function takes an input sequence
+    string, queries the online umelt service
+    at UoU and returns the helicity array
+    that results.
+    """
+    
+    sequence = Sequence(input_seq)
+    umelt = UmeltService()
+    response = umelt.get_response(sequence)
+    helicity = umelt.get_helicity_info(response)
+    
+    return helicity.helicity_data
