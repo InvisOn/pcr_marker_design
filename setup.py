@@ -10,7 +10,7 @@ setuptools.setup(
     long_description=open('README.rst').read(),
     #packages=setuptools.find_packages()
     packages=['pcr_marker_design', 'test'],
-    install_requires=['primer3-py','setuptools','pytest','scipy','numpy'],
+    install_requires=['primer3-py','setuptools','pytest','scipy','numpy','requests','bcbio-gff'],
 
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
