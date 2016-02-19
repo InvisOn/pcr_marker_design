@@ -99,7 +99,7 @@ my_args.target_file.close()
 target_seq_id_list = [re.split(my_args.target_delim,X)[0] for X in targets] ## target_delimiter defaults to ':'  e.g. ABC:SNP:SAMTOOL:1234
 
 ##print header
-print "SNP_Target_ID", "Position","Ref_base","Variant_base" ,"Amplicon_bp","PRIMER_LEFT_SEQUENCE",'PRIMER_RIGHT_SEQUENCE', "ref_melt_Tm","var_melt_Tm","Tm_difference"
+print("SNP_Target_ID", "Position","Ref_base","Variant_base" ,"Amplicon_bp","PRIMER_LEFT_SEQUENCE",'PRIMER_RIGHT_SEQUENCE', "ref_melt_Tm","var_melt_Tm","Tm_difference")
 ##create iterator returning sequence records
 for myrec in SeqIO.parse(my_args.in_file, "fasta"):
     #check if this sequence is included in the target list
