@@ -89,7 +89,7 @@ def_dict['PRIMER_MIN_GC']=my_args.mingc
 
 ##conditional import of umelt
 if my_args.run_uMelt:
-    import umelt_service as umelts
+    import umelt_service as um
 
 #open input files
 
@@ -167,8 +167,13 @@ for myrec in SeqIO.parse(my_args.in_file, "fasta"):
                                 diff_melt=0
                                 if my_args.run_uMelt:
                                     try:
-                                        ref_melt_Tm=umelts.getTm(umelts.getmelt(amp_seq.tostring()[amp_start:amp_end+1]))
-					var_melt_Tm=umelts.getTm(umelts.getmelt(mutamp_seq.tostring()[amp_start:amp_end+1]))
+                                        umelt = um.UmeltService()
+                                        #ref_melt_Tm=umelts.getTm(umelts.getmelt(amp_seq.tostring()[amp_start:amp_end+1]))
+                                        refmelt=um.Sequence(amp_seq.tostring()[amp_start:amp_end+1])
+                                        ref_melt_Tm=umelt.get_helicity_info(umelt.get_response(refmelt)).get_melting_temp()
+                                        #var_melt_Tm=umelts.getTm(umelts.getmelt(mutamp_seq.tostring()[amp_start:amp_end+1]))
+                                        var_melt=um.Sequence(mutamp_seq.tostring()[amp_start:amp_end+1])
+                                        var_melt_Tm=umelt.get_helicity_info(umelt.get_response(var_melt)).get_melting_temp()
                                         diff_melt=abs(ref_melt_Tm - var_melt_Tm)
                                     except:
 					ref_melt_Tm="NA" ##preferably something more informative?
