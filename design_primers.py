@@ -30,8 +30,8 @@ import sys
 from BCBio import GFF
 from BCBio.GFF import GFFExaminer
 from Bio import SeqIO
-import run_p3 as P3
-#import umelt_service as umelts
+from pcr_marker_design import run_p3 as P3
+from pcr_marker_design import umelt_service as um
 import argparse
 
 ##Primer3 defaults or additional options defined as dictionary
