@@ -21,7 +21,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+from __future__ import print_function
 import os
 import StringIO
 import re
@@ -187,9 +187,9 @@ for myrec in SeqIO.parse(my_args.in_file, "fasta"):
                                     variant_seq=target_feat.qualifiers['Variant_seq'][0]
                                 else:
                                     variant_seq="NA"
-                                print mytarget.id, featLocation + 1 ,reference_seq, variant_seq,\
+                                print(mytarget.id, featLocation + 1 ,reference_seq, variant_seq,\
                                 amp_end-amp_start,primerset['PRIMER_LEFT_SEQUENCE'],\
-                                primerset['PRIMER_RIGHT_SEQUENCE'], ref_melt_Tm,var_melt_Tm,diff_melt#, amp_seq.tostring()[amp_start:amp_end+1], mutamp_seq.tostring()[amp_start:amp_end+1]
+                                primerset['PRIMER_RIGHT_SEQUENCE'], ref_melt_Tm,var_melt_Tm,diff_melt)#, amp_seq.tostring()[amp_start:amp_end+1], mutamp_seq.tostring()[amp_start:amp_end+1]
 
 my_args.gff_file.close()
 my_args.in_file.close()
