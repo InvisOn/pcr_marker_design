@@ -30,5 +30,5 @@ class PrimerDesign:
 
 
     def getseqslice(self,contig,start,end):
-        myslice=self.reference[contig][start,end]
+        myslice=self.reference[contig][start:end]
         return myslice.seq
