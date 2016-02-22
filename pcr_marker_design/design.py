@@ -25,10 +25,10 @@ class PrimerDesign:
     """A primer design object that is primed
     with genome reference and variant data
     """
+    def __init__(self, reference):
+        self.reference = Fasta(reference)
 
-def __init__(self, reference):
-    self.reference = Fasta(reference)
 
-def getseqslice(self,contig,interval):
-    seq=self.reference[contig][interval]
-    return seq
+    def getseqslice(self,contig,start,end):
+        myslice=self.reference[contig][start,end]
+        return myslice.seq
