@@ -48,6 +48,11 @@ To regenerate Environment
 conda create -n py3markers --file conda-package-list.txt
 ```
 
+Fasta Access
+------------
+
+- could use https://github.com/mdshw5/pyfaidx  for cutting out slices
+
 umelt
 =====
 
