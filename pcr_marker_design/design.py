@@ -25,7 +25,7 @@ class PrimerDesign:
     """A primer design object that is primed
     with genome reference and variant data
     """
-    def __init__(self, reference,annot_file,desc):
+    def __init__(self,reference,annot_file,desc):
         """
         Usage:  PrimerDesign(reference, annotation, description)
         Initialise a design object witha  reference assembly and
