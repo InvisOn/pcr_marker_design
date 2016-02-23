@@ -20,7 +20,7 @@ from scipy import interpolate
 
 
 class MeltSeq:
-    """A DNA melting .
+    """A DNA melting experiment
 
     This class knows all about melting DNA
     sequences, including all
