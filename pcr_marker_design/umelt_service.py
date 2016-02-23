@@ -19,10 +19,10 @@ from scipy import interpolate
 
 
 
-class Sequence:
-    """A DNA sequence.
+class MeltSeq:
+    """A DNA melting experiment
 
-    This class knows all about DNA
+    This class knows all about melting DNA
     sequences, including all
     attributes they might have and
     how to convert between different
@@ -108,7 +108,7 @@ class UmeltService:
     def get_response(self, sequence):
         """Send a sequence to uMelt and return the response.
 
-        sequence is a Sequence object.
+        sequence is a MeltSeq object.
 
         Returns a requests response object.
         """
@@ -154,7 +154,7 @@ def getmelt(input_seq):
     that results.
     """
 
-    sequence = Sequence(input_seq)
+    sequence = MeltSeq(input_seq)
     umelt = UmeltService()
     response = umelt.get_response(sequence)
     helicity = umelt.get_helicity_info(response)
