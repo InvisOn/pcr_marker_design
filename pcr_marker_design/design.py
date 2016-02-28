@@ -65,7 +65,7 @@ class VcfPrimerDesign:
         variant file(s)
         """
         self.reference = Fasta(reference)
-        self.vcf=vcf.Reader(filename=vcf_file)
+        self.annot=vcf.Reader(filename=vcf_file)
         self.desc=desc
         self.genome=self.reference.filename.replace("fa","fa.fai")
 
@@ -81,7 +81,7 @@ class VcfPrimerDesign:
         sldic=dict(SEQUENCE_ID=self.desc)
         sldic['TARGET_ID']=target_chrom + "_" + str(target_start) +"_" + str(target_end)
         sldic['SEQUENCE_TEMPLATE']=str(self.reference[target_chrom][target_start:target_end].seq)
-        slice_vars=[target_chrom + " " + str(X.start)+ " " +str(X.end) for X in self.vcf.fetch(target_chrom,target_start,target_end)]
+        slice_vars=[target_chrom + " " + str(X.start)+ " " +str(X.end) for X in self.annot.fetch(target_chrom,target_start,target_end)]
         slice_annot=BedTool("\n".join(slice_vars),from_string=True)
         slice_annot=slice_annot-target
         sldic['SEQUENCE_EXCLUDED_REGION']=[(X.start - target_start,X.length) for X in slice_annot]
