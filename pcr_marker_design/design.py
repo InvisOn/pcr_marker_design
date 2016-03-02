@@ -21,6 +21,7 @@ return an iterable  of primer sets
 
 from pyfaidx import Fasta
 from pybedtools import BedTool
+from pcr_marker_design import run_p3 as P3
 import vcf
 import re
 
@@ -90,10 +91,13 @@ class VcfPrimerDesign:
         sldic['SEQUENCE_TARGET']= (target[0].start - target_start,target[0].length)
         return sldic
 
-def designfromvcf(bedtargets,VCFdesigner):
+def designfromvcf(bedtargets,VCFdesigner,max_size,min_size):
     """
+    usage: bedfile of targets,designer obj, max , min
     pass targets as bedtool to a designer
     return a list of dicts
     """
-    
-    pass
+    P3.p3_globals['PRIMER_PRODUCT_SIZE_RANGE']=[[min_size,max_size]]
+    designdict=[VCFdesigner.getseqslicedict(BedTool([b]),max_size) for b in bedtargets]
+    PCR_result=[P3.run_P3(X,P3.p3_globals) for X in designdict]
+    return PCR_result
