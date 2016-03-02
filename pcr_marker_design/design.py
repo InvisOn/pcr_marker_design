@@ -22,6 +22,7 @@ return an iterable  of primer sets
 from pyfaidx import Fasta
 from pybedtools import BedTool
 import vcf
+import re
 
 class PrimerDesign:
     """A primer design object that is primed
@@ -36,7 +37,7 @@ class PrimerDesign:
         self.reference = Fasta(reference)
         self.annotations=BedTool(annot_file)
         self.desc=desc
-        self.genome=self.reference.filename.replace("fasta","fasta.fai")
+        self.genome=re.sub("fasta$","fasta.fai",re.sub("fa$","fa.fai",self.reference.filename))
 
 
     def getseqslicedict(self,target,max_size):
@@ -67,7 +68,8 @@ class VcfPrimerDesign:
         self.reference = Fasta(reference)
         self.annot=vcf.Reader(filename=vcf_file)
         self.desc=desc
-        self.genome=self.reference.filename.replace("fa","fa.fai")
+        self.genome=re.sub("fasta$","fasta.fai",re.sub("fa$","fa.fai",self.reference.filename))
+
 
 
     def getseqslicedict(self,target,max_size):
@@ -87,3 +89,11 @@ class VcfPrimerDesign:
         sldic['SEQUENCE_EXCLUDED_REGION']=[(X.start - target_start,X.length) for X in slice_annot]
         sldic['SEQUENCE_TARGET']= (target[0].start - target_start,target[0].length)
         return sldic
+
+def designfromvcf(bedtargets,VCFdesigner):
+    """
+    pass targets as bedtool to a designer
+    return a list of dicts
+    """
+    
+    pass
