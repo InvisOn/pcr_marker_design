@@ -40,7 +40,7 @@ pip install -e pcr_marker_design
 Requirements
 ------------
 
-Python 3
+Python 2.7
 
 Compatibility
 =============
