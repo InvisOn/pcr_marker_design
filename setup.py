@@ -12,7 +12,7 @@ setuptools.setup(
     packages=['pcr_marker_design', 'test'],
     install_requires=['biopython','primer3-py','setuptools','pytest', \
     'scipy','numpy','requests','bcbio-gff','pybedtools','pyfaidx',\
-    'pandas','pysam'],
+    'pandas','pysam','cython'],
     scripts=['design_primers.py'],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
