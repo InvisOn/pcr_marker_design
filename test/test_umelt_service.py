@@ -7,11 +7,13 @@
 ## mocks to allow routine testing, assuming it is working
 
 import numpy as np
+import pytest
 from scipy import interpolate
 from pcr_marker_design import umelt_service as um
 
 
 class TestUmeltService:
+    @pytest.mark.umelt
     def test_overall_usage(self):
         test_seq = "TATAACCTGACTAACCATGAACCTGGGTAGAATTCCACTCCTCCACCAAATTTTTTAACTTAACCAAG"
 
