@@ -22,7 +22,7 @@ e.g.
 
 conda create -y -n PCRtest python=2.7 cython numpy
 source activate  PCRtest
-``` 
+```
 - pull this repo
 
 ```
@@ -30,18 +30,18 @@ git clone https://github.com/PlantandFoodResearch/pcr_marker_design
 ```
 - pip install it
 ```
-pip install pcr_marker_design
-``` 
+pip install ./pcr_marker_design
+```
 
 For development work
 ```
-pip install -e pcr_marker_design
+pip install -e ./pcr_marker_design
 ```
 
 Requirements
 ------------
 
-Python 3
+Python 2.7
 
 Compatibility
 =============
