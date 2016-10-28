@@ -43,6 +43,13 @@ Requirements
 
 Python 2.7
 
+Melt Prediction
+---------------
+
+- Relies on Univ of Utah Wittwer Lab Service
+- See a test by visting https://www.dna.utah.edu/db/services/cgi-bin/udesign.cgi?seq=CTGATCGATCGTACGGCGCATCGTAGCTCWTAGCTACGCGCGTAGCTAGCTGCCGTAGC&rs=0&cation=20&mg=2&dmso=0
+
+
 Compatibility
 =============
 
