@@ -89,7 +89,7 @@ def_dict['PRIMER_MIN_GC']=my_args.mingc
 
 ##conditional import of umelt
 if my_args.run_uMelt:
-    import umelt_service as um
+    from pcr_marker_design import umelt_service as um
 
 #open input files
 

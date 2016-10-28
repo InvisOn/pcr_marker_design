@@ -19,9 +19,9 @@ Installation
 - create and activate  a clean Python 2.7 env
 e.g.
 ```
-conda create -n PCRtest python=2
+conda create -n PCRtest python=2.7
 source activate  PCRtest
-``` 
+```
 - pull this repo
 
 ```
@@ -29,12 +29,12 @@ git clone https://github.com/PlantandFoodResearch/pcr_marker_design
 ```
 - pip install it
 ```
-pip install pcr_marker_design
-``` 
+pip install ./pcr_marker_design
+```
 
 For development work
 ```
-pip install -e pcr_marker_design
+pip install -e ./pcr_marker_design
 ```
 
 Requirements
