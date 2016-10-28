@@ -19,7 +19,7 @@ Installation
 - create and activate  a clean Python 2.7 env
 e.g.
 ```
-conda create -n PCRtest python=2.7
+conda create -y -n PCRtest python=2.7 numpy
 source activate  PCRtest
 ```
 - pull this repo
