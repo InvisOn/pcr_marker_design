@@ -77,4 +77,4 @@ Authors
 
 pcr-marker-design was written by [John
 McCallum](john.mccallum@plantandfood.co.nz) ,
-[Susan Thomson](susan.thomson@plantandfood.co.nz) [Leshi Chen](), [Scout Liu]().
+[Susan Thomson](susan.thomson@plantandfood.co.nz) [Leshi Chen](), [Scout Liu]() [Brett Davis]()
