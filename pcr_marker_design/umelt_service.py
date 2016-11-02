@@ -16,7 +16,8 @@ import requests
 import xml.etree.ElementTree as ET
 import numpy as np
 from scipy import interpolate
-
+## Silence InsecureRequestWarning
+requests.packages.urllib3.disable_warnings()
 
 
 class MeltSeq:
@@ -68,7 +69,7 @@ class HelicityInfo:
         self.min_temp = min_temp
         self.max_temp = max_temp
 
-        if temperature_range == None:
+        if temperature_range is None:
             temperature_range = np.linspace(self.min_temp, self.max_temp,
                                             self.helicity_data.size)
 
@@ -120,7 +121,6 @@ class UmeltService:
                   'mg': sequence.free_mg}
 
         # TODO: add in error handling
-
         response = requests.get(self.url, params = values,
                                 timeout = self.timeout,
                                 verify = False)
