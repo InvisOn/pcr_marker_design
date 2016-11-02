@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 ##design primers to features in multiple sequences, with option to predict melting
 #usage: design_HRM_primers.py [-h] -i IN_FILE -g GFF_FILE -T TARGET_FILE [-u]
@@ -23,7 +22,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from __future__ import print_function
 import os
-import StringIO
+#import StringIO
 import re
 import copy
 import sys
@@ -144,50 +143,48 @@ for myrec in SeqIO.parse(my_args.in_file, "fasta"):
                         if target_feat.location.start.position == 0:
                             target_feat.location.start.position = 1
                         #get the mask features by removing  target...all features are masked as just using snp and indels, a smarter filter could be added
-			exclude_feat = list(targetRec.features) ##list copy to avoid possible side-effects
-                        exclude_feat.remove(target_feat)
-                        my_target_dict={'SEQUENCE_ID' : rec.name,\
+            exclude_feat = list(targetRec.features) ##list copy to avoid possible side-effects
+            exclude_feat.remove(target_feat)
+            my_target_dict={'SEQUENCE_ID' : rec.name,\
                          'SEQUENCE_TEMPLATE': targetRec.seq.tostring().upper(),\
                          'SEQUENCE_TARGET': [target_feat.location.start.position,1],\
                          'SEQUENCE_EXCLUDED_REGION': [[x.location.start.position,x.location.end.position -x.location.start.position] for x in exclude_feat]}
- 			result=P3.run_P3(target_dict=my_target_dict,global_dict=def_dict)
-                        if my_args.run_uMelt:
-                            amp_seq=targetRec.seq ##need to make this conditional on getting a result >0 and melt=True
-                            mutamp_seq=targetRec.seq.tomutable()
-                            mutamp_seq[target_feat.location.start:target_feat.location.end]=target_feat.qualifiers['Variant_seq'][0] #mutate to variant
-                            other_SNP=[f for f in targetRec.features if f.id != mytarget.id]
-                            if other_SNP:
-                                for snp in other_SNP:
-                                    mutamp_seq[snp.location.start:snp.location.end]=snp.qualifiers['Variant_seq'][0]
-			for primerset in result:
-				amp_start=int(primerset['PRIMER_LEFT'][0])
-				amp_end=int(primerset['PRIMER_RIGHT'][0])
-                                ref_melt_Tm=0
-                                var_melt_Tm=0
-                                diff_melt=0
-                                if my_args.run_uMelt:
-                                    try:
-                                        umelt = um.UmeltService()
-                                        #ref_melt_Tm=umelts.getTm(umelts.getmelt(amp_seq.tostring()[amp_start:amp_end+1]))
-                                        refmelt=um.Sequence(amp_seq.tostring()[amp_start:amp_end+1])
-                                        ref_melt_Tm=umelt.get_helicity_info(umelt.get_response(refmelt)).get_melting_temp()
-                                        #var_melt_Tm=umelts.getTm(umelts.getmelt(mutamp_seq.tostring()[amp_start:amp_end+1]))
-                                        var_melt=um.Sequence(mutamp_seq.tostring()[amp_start:amp_end+1])
-                                        var_melt_Tm=umelt.get_helicity_info(umelt.get_response(var_melt)).get_melting_temp()
-                                        diff_melt=abs(ref_melt_Tm - var_melt_Tm)
-                                    except:
-					ref_melt_Tm="NA" ##preferably something more informative?
-					var_melt_Tm="NA" ##exception handling to be added
-                                        diff_melt="NA"
-                                if target_feat.qualifiers.has_key('Reference_seq'):
-                                    reference_seq=target_feat.qualifiers['Reference_seq'][0]
-                                else:
-                                    reference_seq="NA"
-                                if target_feat.qualifiers.has_key('Variant_seq'):
-                                    variant_seq=target_feat.qualifiers['Variant_seq'][0]
-                                else:
-                                    variant_seq="NA"
-                                print(mytarget.id, featLocation + 1 ,reference_seq, variant_seq,\
+            result=P3.run_P3(target_dict=my_target_dict,global_dict=def_dict)
+            if my_args.run_uMelt:
+                amp_seq=targetRec.seq ##need to make this conditional on getting a result >0 and melt=True
+                mutamp_seq=targetRec.seq.tomutable()
+                mutamp_seq[target_feat.location.start:target_feat.location.end]=target_feat.qualifiers['Variant_seq'][0] #mutate to variant
+                other_SNP=[f for f in targetRec.features if f.id != mytarget.id]
+                if other_SNP:
+                    for snp in other_SNP:
+                        mutamp_seq[snp.location.start:snp.location.end]=snp.qualifiers['Variant_seq'][0]
+            for primerset in result:
+                amp_start=int(primerset['PRIMER_LEFT'][0])
+                amp_end=int(primerset['PRIMER_RIGHT'][0])
+                ref_melt_Tm=0
+                var_melt_Tm=0
+                diff_melt=0
+                if my_args.run_uMelt:
+                    try:
+                        umelt = um.UmeltService()
+                        refmelt= um.MeltSeq(amp_seq.tostring()[amp_start:amp_end+1])
+                        ref_melt_Tm=umelt.get_helicity_info(umelt.get_response(refmelt)).get_melting_temp()
+                        var_melt=um.Sequence(mutamp_seq.tostring()[amp_start:amp_end+1])
+                        var_melt_Tm=umelt.get_helicity_info(umelt.get_response(var_melt)).get_melting_temp()
+                        diff_melt=abs(ref_melt_Tm - var_melt_Tm)
+                    except:
+                        ref_melt_Tm="NA" ##preferably something more informative?
+                        var_melt_Tm="NA" ##exception handling to be added
+                        diff_melt="NA"
+                if target_feat.qualifiers.has_key('Reference_seq'):
+                    reference_seq=target_feat.qualifiers['Reference_seq'][0]
+                else:
+                    reference_seq="NA"
+                if target_feat.qualifiers.has_key('Variant_seq'):
+                    variant_seq=target_feat.qualifiers['Variant_seq'][0]
+                else:
+                    variant_seq="NA"
+                print(mytarget.id, featLocation + 1 ,reference_seq, variant_seq,\
                                 amp_end-amp_start,primerset['PRIMER_LEFT_SEQUENCE'],\
                                 primerset['PRIMER_RIGHT_SEQUENCE'], ref_melt_Tm,var_melt_Tm,diff_melt)#, amp_seq.tostring()[amp_start:amp_end+1], mutamp_seq.tostring()[amp_start:amp_end+1]
 
