@@ -19,7 +19,8 @@ Installation
 - create and activate  a clean Python 2.7 env
 e.g.
 ```
-conda create -y -n PCRtest python=2.7 numpy
+
+conda create -y -n PCRtest python=2.7 cython numpy
 source activate  PCRtest
 ```
 - pull this repo
@@ -41,6 +42,13 @@ Requirements
 ------------
 
 Python 2.7
+
+Melt Prediction
+---------------
+
+- Relies on Univ of Utah Wittwer Lab Service
+- See a test by visting https://www.dna.utah.edu/db/services/cgi-bin/udesign.cgi?seq=CTGATCGATCGTACGGCGCATCGTAGCTCWTAGCTACGCGCGTAGCTAGCTGCCGTAGC&rs=0&cation=20&mg=2&dmso=0
+
 
 Compatibility
 =============
