@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ##design primers to features in multiple sequences, with option to predict melting
 #usage: design_HRM_primers.py [-h] -i IN_FILE -g GFF_FILE -T TARGET_FILE [-u]
 #                             [-n MAX_PRIMERS] [-p PROD_MIN_SIZE]
@@ -169,7 +169,7 @@ for myrec in SeqIO.parse(my_args.in_file, "fasta"):
                         umelt = um.UmeltService()
                         refmelt= um.MeltSeq(amp_seq.tostring()[amp_start:amp_end+1])
                         ref_melt_Tm=umelt.get_helicity_info(umelt.get_response(refmelt)).get_melting_temp()
-                        var_melt=um.Sequence(mutamp_seq.tostring()[amp_start:amp_end+1])
+                        var_melt=um.MeltSeq(mutamp_seq.tostring()[amp_start:amp_end+1])
                         var_melt_Tm=umelt.get_helicity_info(umelt.get_response(var_melt)).get_melting_temp()
                         diff_melt=abs(ref_melt_Tm - var_melt_Tm)
                     except:
