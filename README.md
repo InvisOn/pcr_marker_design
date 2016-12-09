@@ -16,12 +16,11 @@ Usage
 Installation
 ============
 
-- create and activate  a clean Python 2.7 env
+- create and activate  a clean Python 3xx env
 e.g.
 ```
-
-conda create -y -n PCRtest python=2.7 cython numpy
-source activate  PCRtest
+conda create -y -n Py3PCRtest python=3.5  numpy
+source activate  Py3PCRtest
 ```
 - pull this repo
 
@@ -33,15 +32,32 @@ git clone https://github.com/PlantandFoodResearch/pcr_marker_design
 pip install ./pcr_marker_design
 ```
 
-For development work
+## For development work
 ```
 pip install -e ./pcr_marker_design
+```
+## Create an identical env
+
+- in OSX
+```
+conda create --name <env> --file ./docs/Py3_environment.spec.txt
+```
+
+- other (may need some editing)
+```
+conda env create -f ./docs/Py3_environment.yml
 ```
 
 Requirements
 ------------
 
-Python 2.7
+Python 3.5
+
+To Run Tests
+-----------
+
+from root directory
+>pytest
 
 Melt Prediction
 ---------------
@@ -61,4 +77,4 @@ Authors
 
 pcr-marker-design was written by [John
 McCallum](john.mccallum@plantandfood.co.nz) ,
-[Susan Thomson](susan.thomson@plantandfood.co.nz) [Leshi Chen](), [Scout Liu]().
+[Susan Thomson](susan.thomson@plantandfood.co.nz) [Leshi Chen](), [Scout Liu]() [Brett Davis]()
