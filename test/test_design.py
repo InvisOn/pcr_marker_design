@@ -26,10 +26,10 @@ class TestDesign:
         """
         Get dict suitable for primer3 from vcf reader
             """
-        test_seq="./test/test-data/Kiwifruit_pseudomolecule_Chr.fa"
+        test_seq="./test/test-data/CHR9.1.68.5.fasta"
         vcffile= "./test/test-data/Chr9_Myb210.vcf.gz"
         designer = d.VcfPrimerDesign(test_seq,vcffile,"MybTest")
-        target=BedTool("Chr9 1390065 1390066",from_string=True)
+        target=BedTool("CHR9 1390065 1390066",from_string=True)
         max_size=100
         target_dic={'SEQUENCE_EXCLUDED_REGION': [(82, 4),(92, 1),(113, 1),(126, 1),(127, 1),(139, 3),
         (150, 1),(164, 2),(192, 1)],
