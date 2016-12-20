@@ -16,7 +16,7 @@ import requests
 import xml.etree.ElementTree as ET
 import numpy as np
 from scipy import interpolate
-## Silence InsecureRequestWarning
+# Silence InsecureRequestWarning
 requests.packages.urllib3.disable_warnings()
 
 
@@ -31,8 +31,7 @@ class MeltSeq:
     other classes might want to use.
     """
 
-    def __init__(self, sequence, resolution = 0, dmso_percent = 0,
-                 cations = 20, free_mg = 2):
+    def __init__(self, sequence, resolution=0, dmso_percent=0, cations=20, free_mg=2):
         self.sequence = sequence
         self.resolution = resolution
         self.dmso_percent = dmso_percent
@@ -50,8 +49,7 @@ class HelicityInfo:
     data.
     """
 
-    def __init__(self, helicity_array, temperature_range = None,
-                 min_temp = 65, max_temp = 100.5):
+    def __init__(self, helicity_array, temperature_range=None, min_temp=65, max_temp=100.5):
         """Create a HelicityInfo object.
 
         helicity_array is a numpy array of
@@ -65,7 +63,6 @@ class HelicityInfo:
         """
 
         self.helicity_data = helicity_array
-
         self.min_temp = min_temp
         self.max_temp = max_temp
 
@@ -76,18 +73,19 @@ class HelicityInfo:
         self.temperature_range = temperature_range
 
     def get_melting_temp(self):
+
         # interpolate as a spline
         # to increase resolution
         # s = 0 means no smoothing
         # just straight interpolation
-        tck = interpolate.splrep(self.temperature_range, self.helicity_data,
-                                 s = 0)
+        tck = interpolate.splrep(self.temperature_range, self.helicity_data, s=0)
+
         # make some new x points with 10 times
         # the resolution of our original points
-        xnew = np.linspace(self.min_temp, self.max_temp,
-                           self.helicity_data.size * 10)
+        xnew = np.linspace(self.min_temp, self.max_temp, self.helicity_data.size * 10)
+
         # first derivative of the line
-        ynew_derivative = interpolate.splev(xnew, tck, der = 1)
+        ynew_derivative = interpolate.splev(xnew, tck, der=1)
 
         # return the x value corresponding to the
         # point with the steepest downward slope
@@ -121,23 +119,21 @@ class UmeltService:
                   'mg': sequence.free_mg}
 
         # TODO: add in error handling
-        response = requests.get(self.url, params = values,
-                                timeout = self.timeout,
-                                verify = False)
+        response = requests.get(self.url, params=values, timeout=self.timeout, verify=False)
         # TODO: replace 'verify = False' with something
         # that's not a massive security hole
 
         return response
 
     def get_helicity_info(self, response):
+
         melt_data = response.text
         tree = ET.fromstring(melt_data)
-        helicity = [amp.find('helicity').text.split() for \
-            amp in tree.findall('amplicon')]
+        helicity = [amp.find('helicity').text.split() for amp in tree.findall('amplicon')]
 
         # helicity is a list of 3 lists, which for our
         # purposes are identical
-        helicity_array = np.array(helicity[0], dtype = np.float32).transpose()
+        helicity_array = np.array(helicity[0], dtype=np.float32).transpose()
         temperature_range = np.arange(65, 100.5, 0.5)
 
         helicity_info = HelicityInfo(helicity_array, temperature_range)
