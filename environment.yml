@@ -1,6 +1,4 @@
 name: pcr_marker_design
-channels: !!python/tuple
-- defaults
 dependencies:
 - biopython=1.68=np111py35_0
 - cython=0.25.2=py35_0
@@ -31,5 +29,3 @@ dependencies:
   - pytest==3.0.5
   - pyvcf==0.6.8
   - requests==2.12.4
-prefix: /Users/cfltxm/anaconda/envs/pcr_marker_design2
-
