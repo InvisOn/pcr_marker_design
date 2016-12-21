@@ -54,7 +54,7 @@ class PrimerDesign:
                        X in (self.annotations - target) if
                        (X.chrom == target[0].chrom) & (X.start > target_int[0].start) & (X.end < target_int[0].end)]
         sldic['SEQUENCE_EXCLUDED_REGION'] = slice_annot
-        sldic['SEQUENCE_TARGET']= (target[0].start - offset, target[0].length)
+        sldic['SEQUENCE_TARGET'] = (target[0].start - offset, target[0].length)
         return sldic
 
 
@@ -101,5 +101,5 @@ def designfromvcf(bedtargets, VCFdesigner, max_size, min_size):
     """
     P3.p3_globals['PRIMER_PRODUCT_SIZE_RANGE'] = [[min_size, max_size]]
     designdict = [VCFdesigner.getseqslicedict(BedTool([b]), max_size) for b in bedtargets]
-    PCR_result = [P3.run_P3(X,P3.p3_globals) for X in designdict]
+    PCR_result = [P3.run_P3(X, P3.p3_globals) for X in designdict]
     return PCR_result

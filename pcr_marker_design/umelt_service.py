@@ -16,6 +16,7 @@ import requests
 import xml.etree.ElementTree as ET
 import numpy as np
 from scipy import interpolate
+
 # Silence InsecureRequestWarning
 requests.packages.urllib3.disable_warnings()
 
