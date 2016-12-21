@@ -1,10 +1,10 @@
-## Test uMelt functionality
+# Test uMelt functionality
 
-## Really need a function to test if umelt service is
-## a) working
-## b) working as expected
+# Really need a function to test if umelt service is
+# a) working
+# b) working as expected
 
-## mocks to allow routine testing, assuming it is working
+# mocks to allow routine testing, assuming it is working
 
 import numpy as np
 import pytest
@@ -41,7 +41,7 @@ class TestUmeltService:
                                   0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
                                   0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
                                   0.00000000e+00, 0.00000000e+00],
-                                  dtype=np.float32)
+                                 dtype=np.float32)
 
         sequence = um.MeltSeq(test_seq)
         umelt = um.UmeltService()
@@ -72,9 +72,9 @@ def make_spline(spline_x, spline_y):
     x = np.array(spline_x)
     y = np.array(spline_y)
 
-    tck = interpolate.splrep(x, y, s = 0)
+    tck = interpolate.splrep(x, y, s=0)
     xnew = np.linspace(x.min(), x.max(), 50)
-    dynew_dx = interpolate.splev(xnew, tck, der = 1)
+    dynew_dx = interpolate.splev(xnew, tck, der=1)
 
     return xnew[dynew_dx.argmin()]
 
