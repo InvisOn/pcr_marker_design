@@ -202,7 +202,7 @@ def design_primers(my_args):
 
 
 def main():
-    my_args = cli_parser(sys.argv)
+    my_args = cli_parser(sys.argv[1:])
     lines = design_primers(my_args)
     print('\n'.join(lines))
 
