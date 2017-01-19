@@ -35,7 +35,16 @@ import argparse
 
 
 # parse arguments
-def cli_parser(arguments):
+def parse_args(arguments):
+    """
+    CLI argument parsers for design_primers.py.
+
+    :param arguments: A list of arguments to parse
+    :type arguments: list[str]
+
+    :return: An :class:`argparse.ArgumentParser` object with arguments for primer design
+    :rtype: :class:`argparse.ArgumentParser`
+    """
     parser = argparse.ArgumentParser(description='Primer set design and melt prediction parameters')
     parser.add_argument('-i', type=argparse.FileType('r'), help="input sequence file, required", dest='in_file', required=True)
     parser.add_argument('-g', type=argparse.FileType('r'), help="input gff file with SNP and indels, required", dest='gff_file', required=True)
@@ -59,14 +68,24 @@ def cli_parser(arguments):
 
     parser.add_argument('-d', type=str, help="variant indentifier delimiter, used to separate sequence ID from rest ", dest='target_delim', default=':')
     try:
-            my_args = parser.parse_args(arguments)
+            arguments = parser.parse_args(arguments)
     except SystemExit:
             print("\nOops, an argument is missing/invalid, exiting...\n")
-            sys.exit(0)
-    return my_args
+            #sys.exit(0)
+    return arguments
 
 
-def design_primers(my_args):
+def design_primers(arguments):
+    """
+    Design primers.
+
+
+    :param arguments: An :class:`argparse.ArgumentParser` object with arguments for primer design
+    :type arguments: :class:`argparse.ArgumentParser`
+
+    :return: A generator object that yields a header and primers strings
+    :rtype: generator[str]
+    """
     ##Primer3 defaults or additional options defined as dictionary
     def_dict={
     'PRIMER_MIN_SIZE':18 ,
@@ -75,39 +94,39 @@ def design_primers(my_args):
 
 
     ##update from args. NEEDS TO BE FINISHED
-    productsizerange = [my_args.prod_min_size,my_args.prod_max_size]
+    productsizerange = [arguments.prod_min_size, arguments.prod_max_size]
     def_dict['PRIMER_PRODUCT_SIZE_RANGE']=productsizerange
-    def_dict['PRIMER_NUM_RETURN']=my_args.max_primers +1
-    def_dict['PRIMER_OPT_SIZE']=my_args.opt_primer_length
-    def_dict['PRIMER_PAIR_MAX_DIFF_TM']=my_args.max_tm_diff
-    def_dict['PRIMER_OPT_TM']=my_args.optimum_tm
-    def_dict['PRIMER_OPT_GC_PERCENT']=my_args.opt_GC_percent
-    def_dict['PRIMER_MAX_POLY_X']= my_args.maxpolyx
-    def_dict['PRIMER_GC_CLAMP']=my_args.gc_clamp
+    def_dict['PRIMER_NUM_RETURN']= arguments.max_primers + 1
+    def_dict['PRIMER_OPT_SIZE']=arguments.opt_primer_length
+    def_dict['PRIMER_PAIR_MAX_DIFF_TM']=arguments.max_tm_diff
+    def_dict['PRIMER_OPT_TM']=arguments.optimum_tm
+    def_dict['PRIMER_OPT_GC_PERCENT']=arguments.opt_GC_percent
+    def_dict['PRIMER_MAX_POLY_X']= arguments.maxpolyx
+    def_dict['PRIMER_GC_CLAMP']=arguments.gc_clamp
 
-    def_dict['PRIMER_MAX_SELF_END']=my_args.maxselfend
-    def_dict['PRIMER_MAX_SELF_ANY']=my_args.maxselfany
-    def_dict['PRIMER_MAX_GC']=my_args.maxgc
-    def_dict['PRIMER_MIN_GC']=my_args.mingc
+    def_dict['PRIMER_MAX_SELF_END']=arguments.maxselfend
+    def_dict['PRIMER_MAX_SELF_ANY']=arguments.maxselfany
+    def_dict['PRIMER_MAX_GC']=arguments.maxgc
+    def_dict['PRIMER_MIN_GC']=arguments.mingc
 
 
 
     ##conditional import of umelt
-    if my_args.run_uMelt:
+    if arguments.run_uMelt:
         from pcr_marker_design import umelt_service as um
 
     #open input files
 
-    targets=[line.rstrip() for line in my_args.target_file.readlines()]
-    my_args.target_file.close()
+    targets=[line.rstrip() for line in arguments.target_file.readlines()]
+    arguments.target_file.close()
     ##and create a hit list of sequences from this
-    target_seq_id_list = [re.split(my_args.target_delim,X)[0] for X in targets] ## target_delimiter defaults to ':'  e.g. ABC:SNP:SAMTOOL:1234
+    target_seq_id_list = [re.split(arguments.target_delim, X)[0] for X in targets] ## target_delimiter defaults to ':'  e.g. ABC:SNP:SAMTOOL:1234
 
     # yield header string
     yield ' '.join(("SNP_Target_ID", "Position","Ref_base","Variant_base" ,"Amplicon_bp","PRIMER_LEFT_SEQUENCE",'PRIMER_RIGHT_SEQUENCE', "ref_melt_Tm","var_melt_Tm","Tm_difference"))
 
     ##create iterator returning sequence records
-    for myrec in SeqIO.parse(my_args.in_file, "fasta"):
+    for myrec in SeqIO.parse(arguments.in_file, "fasta"):
         #check if this sequence is included in the target list
         if myrec.id in target_seq_id_list:
             ##create sequence dictionary so we can add in gff annotations
@@ -115,9 +134,9 @@ def design_primers(my_args):
             ##just limit to gff annotations for this sequence
             limit_info = dict(gff_id = [ myrec.id ])
             ##rewind gff filehandle
-            my_args.gff_file.seek(0)
+            arguments.gff_file.seek(0)
             ##read annotations into sequence dictionary for this sequence record only
-            annotations = [r for r in GFF.parse(my_args.gff_file, base_dict=seq_dict,limit_info=limit_info)]
+            annotations = [r for r in GFF.parse(arguments.gff_file, base_dict=seq_dict, limit_info=limit_info)]
             ##if there are any annotations, then  proceed.
             if annotations:
                 rec=annotations[0]
@@ -131,16 +150,16 @@ def design_primers(my_args):
                         ##from feature UNLESS feature is close to end
                         ##Note that slice is zero-based
                         featLocation = mytarget.location.start.position
-                        if featLocation > my_args.prod_max_size:
-                            slice_start = featLocation -  my_args.prod_max_size
-                            featPosition =  my_args.prod_max_size
+                        if featLocation > arguments.prod_max_size:
+                            slice_start = featLocation - arguments.prod_max_size
+                            featPosition =  arguments.prod_max_size
                         else:
                             slice_start = 0
                             featPosition = featLocation
-                        if (len(rec) - featLocation) <  my_args.prod_max_size:
+                        if (len(rec) - featLocation) <  arguments.prod_max_size:
                             slice_end = len(rec)
                         else:
-                            slice_end = featLocation +  my_args.prod_max_size
+                            slice_end = featLocation + arguments.prod_max_size
                         ###grab slice of sequence fom this window.
                         targetRec = rec[slice_start:slice_end]
                         matching_feature = [f for f in targetRec.features if f.id == mytarget.id]
@@ -157,7 +176,7 @@ def design_primers(my_args):
                              'SEQUENCE_TARGET': [target_feat.location.start.position,1],\
                              'SEQUENCE_EXCLUDED_REGION': [[x.location.start.position,x.location.end.position -x.location.start.position] for x in exclude_feat]}
                 result=P3.run_P3(target_dict=my_target_dict,global_dict=def_dict)
-                if my_args.run_uMelt:
+                if arguments.run_uMelt:
                     amp_seq=targetRec.seq ##need to make this conditional on getting a result >0 and melt=True
                     mutamp_seq=targetRec.seq.tomutable()
                     mutamp_seq[target_feat.location.start:target_feat.location.end]=target_feat.qualifiers['Variant_seq'][0] #mutate to variant
@@ -171,7 +190,7 @@ def design_primers(my_args):
                     ref_melt_Tm=0
                     var_melt_Tm=0
                     diff_melt=0
-                    if my_args.run_uMelt:
+                    if arguments.run_uMelt:
                         try:
                             umelt = um.UmeltService()
                             refmelt= um.MeltSeq(amp_seq.tostring()[amp_start:amp_end+1])
@@ -197,13 +216,17 @@ def design_primers(my_args):
                                     amp_end-amp_start,primerset['PRIMER_LEFT_SEQUENCE'],\
                                     primerset['PRIMER_RIGHT_SEQUENCE'], ref_melt_Tm,var_melt_Tm,diff_melt))#, amp_seq.tostring()[amp_start:amp_end+1], mutamp_seq.tostring()[amp_start:amp_end+1]
 
-    my_args.gff_file.close()
-    my_args.in_file.close()
+    arguments.gff_file.close()
+    arguments.in_file.close()
 
 
 def main():
-    my_args = cli_parser(sys.argv[1:])
-    lines = design_primers(my_args)
+    """
+    Main function for running design_primers.py as a script.
+    Parses arguments from standard in and prints results to standard out.
+    """
+    arguments = parse_args(sys.argv[1:])
+    lines = design_primers(arguments)
     print('\n'.join(lines))
 
 if __name__ == '__main__':
