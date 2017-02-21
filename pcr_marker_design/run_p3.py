@@ -32,13 +32,20 @@ p3_globals = {
 
 # call P3 with dict of args, returns dict, no exception handling
 
-### Need to add in TARGET_ID tag
+
 def run_P3(target_dict, global_dict):
     P3_dict = primer3.bindings.designPrimers(target_dict, global_dict)
     # return iterable list
-    primer_list = [dict(PRIMER_RIGHT_SEQUENCE=P3_dict.get('PRIMER_RIGHT_' + str(X) + '_SEQUENCE'),
-                        PRIMER_LEFT=P3_dict.get('PRIMER_LEFT_' + str(X)),
-                        PRIMER_RIGHT=P3_dict.get('PRIMER_RIGHT_' + str(X)),
-                        PRIMER_LEFT_SEQUENCE=P3_dict.get('PRIMER_LEFT_' + str(X) + '_SEQUENCE')) for
-                   X in range(0, int(P3_dict.get('PRIMER_RIGHT_NUM_RETURNED')) - 1)]
+    my_offset=target_dict.get('REF_OFFSET')
+    primer_list=[]
+    for i in range(0, int(P3_dict.get('PRIMER_RIGHT_NUM_RETURNED')) - 1):
+        primer_dict=dict(TARGET_ID=target_dict.get('TARGET_ID'))
+        primer_dict['PRIMER_LEFT_SEQUENCE']=P3_dict.get('PRIMER_LEFT_' + str(i) + '_SEQUENCE')
+        primer_dict['PRIMER_RIGHT_SEQUENCE'] = P3_dict.get('PRIMER_RIGHT_' + str(i) + '_SEQUENCE')
+        pr_left=P3_dict.get('PRIMER_LEFT_' + str(i))
+        primer_dict['PRIMER_LEFT_']=(pr_left[0] + my_offset,pr_left[1])
+        pr_right = P3_dict.get('PRIMER_RIGHT_' + str(i))
+        primer_dict['PRIMER_RIGHT'] = (pr_right[0] + my_offset, pr_right[1])
+        primer_list.append(primer_dict)
+
     return primer_list

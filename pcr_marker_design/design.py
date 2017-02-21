@@ -47,10 +47,15 @@ class PrimerDesign:
         """
         target_int = target.slop(b=max_size, g=self.genome)
         offset = target_int[0].start
+        target_len = target_int[0].length
         sldic = dict(SEQUENCE_ID=self.desc)
-        ### Should make this region format
+        ### Target in  region format
         #### ie CHR:start-{start + length -1}
-        sldic['TARGET_ID'] = str(target[0].chrom + "_" + str(target[0].start) + "_" + str(target[0].end))
+        sldic['TARGET_ID'] = str(target[0].chrom + ":" +
+                                 str(target[0].start +1) + "-" +
+                                 str(target[0].end))
+        ### Pass the offset to allow correction
+        sldic['REF_OFFSET']=offset
         sldic['SEQUENCE_TEMPLATE'] = str(self.reference[target[0].chrom][target_int[0].start:target_int[0].end].seq)
         slice_annot = [(X.start-offset, X.length) for
                        X in (self.annotations - target) if
