@@ -31,6 +31,8 @@ p3_globals = {
 
 
 # call P3 with dict of args, returns dict, no exception handling
+
+### Need to add in TARGET_ID tag
 def run_P3(target_dict, global_dict):
     P3_dict = primer3.bindings.designPrimers(target_dict, global_dict)
     # return iterable list

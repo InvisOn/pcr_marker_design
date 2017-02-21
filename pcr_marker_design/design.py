@@ -42,13 +42,15 @@ class PrimerDesign:
         self.genome = re.sub("fasta$", "fasta.fai", re.sub("fa$", "fa.fai", self.reference.filename))
 
     def getseqslicedict(self, target, max_size):
-        """Pass a target to a designer and get a dictionary
+        """Pass a bedtool target to a designer and get a dictionary
         slice that we can pass to P3
         """
         target_int = target.slop(b=max_size, g=self.genome)
         offset = target_int[0].start
         sldic = dict(SEQUENCE_ID=self.desc)
-        sldic['TARGET_ID'] = str(target[0].chrom + "_" + str(target_int[0].start) + "_" + str(target_int[0].end))
+        ### Should make this region format
+        #### ie CHR:start-{start + length -1}
+        sldic['TARGET_ID'] = str(target[0].chrom + "_" + str(target[0].start) + "_" + str(target[0].end))
         sldic['SEQUENCE_TEMPLATE'] = str(self.reference[target[0].chrom][target_int[0].start:target_int[0].end].seq)
         slice_annot = [(X.start-offset, X.length) for
                        X in (self.annotations - target) if
