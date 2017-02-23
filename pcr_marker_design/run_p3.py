@@ -37,17 +37,21 @@ def run_P3(target_dict, global_dict):
     P3_dict = primer3.bindings.designPrimers(target_dict, global_dict)
     # return iterable list
     my_offset=target_dict.get('REF_OFFSET',0)
-
+    my_seq_id=target_dict.get('SEQUENCE_ID')
     primer_list=[]
     for i in range(0, int(P3_dict.get('PRIMER_RIGHT_NUM_RETURNED')) - 1):
         primer_dict=dict(TARGET_ID=target_dict.get('TARGET_ID'),
-                         SEQUENCE_ID=target_dict.get('SEQUENCE_ID'))
+                         SEQUENCE_ID=my_seq_id)
         primer_dict['PRIMER_LEFT_SEQUENCE']=P3_dict.get('PRIMER_LEFT_' + str(i) + '_SEQUENCE')
         primer_dict['PRIMER_RIGHT_SEQUENCE'] = P3_dict.get('PRIMER_RIGHT_' + str(i) + '_SEQUENCE')
         pr_left=P3_dict.get('PRIMER_LEFT_' + str(i))
         primer_dict['PRIMER_LEFT']=(pr_left[0] + my_offset,pr_left[1])
         pr_right = P3_dict.get('PRIMER_RIGHT_' + str(i))
         primer_dict['PRIMER_RIGHT'] = (pr_right[0] + my_offset, pr_right[1])
+        primer_dict['AMPLICON_REGION']= my_seq_id.split(':')[0] + ":" +\
+                                        str(pr_left[0] + my_offset) + "-" + \
+                                        str(pr_right[0] + my_offset)
+
         primer_list.append(primer_dict)
 
     return primer_list
