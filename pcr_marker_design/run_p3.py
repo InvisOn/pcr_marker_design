@@ -49,8 +49,8 @@ def run_P3(target_dict, global_dict):
         pr_right = P3_dict.get('PRIMER_RIGHT_' + str(i))
         primer_dict['PRIMER_RIGHT'] = (pr_right[0] + my_offset, pr_right[1])
         primer_dict['AMPLICON_REGION']= my_seq_id.split(':')[0] + ":" +\
-                                        str(pr_left[0] + my_offset) + "-" + \
-                                        str(pr_right[0] + my_offset)
+                                        str(pr_left[0] + my_offset + 1) + "-" + \
+                                        str(pr_right[0] + my_offset +1)
 
         primer_list.append(primer_dict)
 
