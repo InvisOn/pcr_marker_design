@@ -18,6 +18,7 @@ p3_globals = {
         'PRIMER_MIN_GC': 20.0,
         'PRIMER_MAX_GC': 80.0,
         'PRIMER_MAX_POLY_X': 100,
+        'PRIMER_NUM_RETURN': 5,
         'PRIMER_INTERNAL_MAX_POLY_X': 100,
         'PRIMER_SALT_MONOVALENT': 50.0,
         'PRIMER_DNA_CONC': 50.0,

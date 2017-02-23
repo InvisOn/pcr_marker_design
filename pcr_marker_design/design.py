@@ -104,7 +104,7 @@ class VcfPrimerDesign:
 
 def designfromvcf(bedtargets, VCFdesigner, max_size, min_size):
     """
-    usage: bedfile of targets,designer obj, max , min
+    usage: bedTool of targets,designer obj, max , min
     pass targets as bedtool to a designer
     return a list of dicts
     """
