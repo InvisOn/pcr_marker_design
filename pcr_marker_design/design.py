@@ -80,11 +80,14 @@ class VcfPrimerDesign:
         self.desc = desc
         self.genome = re.sub("fasta$", "fasta.fai", re.sub("fa$", "fa.fai", self.reference.filename))
 
-    def getseqslicedict(self, target, max_size):
+    def getseqslicedict(self, target, max_size, flanking=True):
         """Pass a bed target to a designer and get a dictionary
-        slice that we can pass to P3
+        slice that we can pass to P3. Default is for design flanking a target.
         """
-        target_int = target.slop(b=max_size, g=self.genome)
+        if flanking:
+            target_int = target.slop(b=max_size, g=self.genome)
+        else:
+            target_int = target
         target_chrom = target[0].chrom
         target_start = target_int[0].start
         target_end = target_int[0].end
@@ -98,7 +101,8 @@ class VcfPrimerDesign:
         slice_annot = BedTool("\n".join(slice_vars), from_string=True)
         slice_annot = slice_annot - target
         sldic['SEQUENCE_EXCLUDED_REGION'] = [(X.start - target_start, X.length) for X in slice_annot]
-        sldic['SEQUENCE_TARGET'] = (target[0].start - target_start, target[0].length)
+        if flanking:
+            sldic['SEQUENCE_TARGET'] = (target[0].start - target_start, target[0].length)
         return sldic
 
 
