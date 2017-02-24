@@ -19,7 +19,7 @@ return an iterable  of primer sets
 """
 
 
-from pyfaidx import Fasta
+from pyfaidx import Fasta, FastaVariant
 from pybedtools import BedTool
 from pcr_marker_design import run_p3 as P3
 import vcf
@@ -76,7 +76,9 @@ class VcfPrimerDesign:
         variant file(s)
         """
         self.reference = Fasta(reference)
-        self.annot = vcf.Reader(filename=vcf_file)
+        ## Following to be gagged https://docs.python.org/2/library/warnings.html#temporarily-suppressing-warnings
+        self.alt=FastaVariant(reference,vcf_file,het=True, hom=True,sample=None, as_raw=True)
+        self.annot = vcf.Reader(filename=vcf_file) ## Do we need bot of these? FastaVariant may suffice for snps
         self.desc = desc
         self.genome = re.sub("fasta$", "fasta.fai", re.sub("fa$", "fa.fai", self.reference.filename))
 
@@ -104,6 +106,20 @@ class VcfPrimerDesign:
         if flanking:
             sldic['SEQUENCE_TARGET'] = (target[0].start - target_start, target[0].length)
         return sldic
+
+    def meltSlice(self, region):
+        """Apply variants to a region and pass
+        ref and alt consensus to uMelt, returning a tuple of (ref_Tm, alt_Tm)
+        """
+        target=region.split(':')
+        coord=[int(X)  for X in target[1].split('-')]
+        target_chrom=target[0]
+        target_start=coord[0] -1
+        target_end=coord[1]
+        ref_seq=str(self.reference[target_chrom][target_start:target_end].seq)
+        alt_seq=self.alt[target_chrom][target_start:target_end]
+        return (target_chrom,target_start,target_end,ref_seq,alt_seq)
+
 
 
 def designfromvcf(bedtargets, VCFdesigner, max_size, min_size):
