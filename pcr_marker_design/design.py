@@ -22,6 +22,8 @@ return an iterable  of primer sets
 from pyfaidx import Fasta, FastaVariant
 from pybedtools import BedTool
 from pcr_marker_design import run_p3 as P3
+from pcr_marker_design import  umelt_service as um
+
 import vcf
 import re
 
@@ -108,8 +110,8 @@ class VcfPrimerDesign:
         return sldic
 
     def meltSlice(self, region):
-        """Apply variants to a region and pass
-        ref and alt consensus to uMelt, returning a tuple of (ref_Tm, alt_Tm)
+        """Apply variants to an amplicon region and pass
+        ref and alt consensus to uMelt web service, returning a tuple of (ref_Tm, alt_Tm)
         """
         target=region.split(':')
         coord=[int(X)  for X in target[1].split('-')]
@@ -118,7 +120,13 @@ class VcfPrimerDesign:
         target_end=coord[1]
         ref_seq=str(self.reference[target_chrom][target_start:target_end].seq)
         alt_seq=self.alt[target_chrom][target_start:target_end]
-        return (target_chrom,target_start,target_end,ref_seq,alt_seq)
+        ## Melt both
+        umelt = um.UmeltService()
+        refmelt = um.MeltSeq(ref_seq)
+        altmelt=um.MeltSeq(alt_seq)
+        ref_melt_Tm = umelt.get_helicity_info(umelt.get_response(refmelt)).get_melting_temp()
+        alt_melt_Tm = umelt.get_helicity_info(umelt.get_response(altmelt)).get_melting_temp()
+        return (ref_melt_Tm,alt_melt_Tm)
 
 
 
