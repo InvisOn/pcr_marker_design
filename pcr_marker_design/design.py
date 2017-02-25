@@ -19,9 +19,11 @@ return an iterable  of primer sets
 """
 
 
-from pyfaidx import Fasta
+from pyfaidx import Fasta, FastaVariant
 from pybedtools import BedTool
 from pcr_marker_design import run_p3 as P3
+from pcr_marker_design import  umelt_service as um
+
 import vcf
 import re
 
@@ -76,15 +78,20 @@ class VcfPrimerDesign:
         variant file(s)
         """
         self.reference = Fasta(reference)
-        self.annot = vcf.Reader(filename=vcf_file)
+        ## Following to be gagged https://docs.python.org/2/library/warnings.html#temporarily-suppressing-warnings
+        self.alt=FastaVariant(reference,vcf_file,het=True, hom=True,sample=None, as_raw=True)
+        self.annot = vcf.Reader(filename=vcf_file) ## Do we need bot of these? FastaVariant may suffice for snps
         self.desc = desc
         self.genome = re.sub("fasta$", "fasta.fai", re.sub("fa$", "fa.fai", self.reference.filename))
 
-    def getseqslicedict(self, target, max_size):
+    def getseqslicedict(self, target, max_size, flanking=True):
         """Pass a bed target to a designer and get a dictionary
-        slice that we can pass to P3
+        slice that we can pass to P3. Default is for design flanking a target.
         """
-        target_int = target.slop(b=max_size, g=self.genome)
+        if flanking:
+            target_int = target.slop(b=max_size, g=self.genome)
+        else:
+            target_int = target
         target_chrom = target[0].chrom
         target_start = target_int[0].start
         target_end = target_int[0].end
@@ -98,8 +105,29 @@ class VcfPrimerDesign:
         slice_annot = BedTool("\n".join(slice_vars), from_string=True)
         slice_annot = slice_annot - target
         sldic['SEQUENCE_EXCLUDED_REGION'] = [(X.start - target_start, X.length) for X in slice_annot]
-        sldic['SEQUENCE_TARGET'] = (target[0].start - target_start, target[0].length)
+        if flanking:
+            sldic['SEQUENCE_TARGET'] = (target[0].start - target_start, target[0].length)
         return sldic
+
+    def meltSlice(self, region):
+        """Apply variants to an amplicon region and pass
+        ref and alt consensus to uMelt web service, returning a tuple of (ref_Tm, alt_Tm)
+        """
+        target=region.split(':')
+        coord=[int(X)  for X in target[1].split('-')]
+        target_chrom=target[0]
+        target_start=coord[0] -1
+        target_end=coord[1]
+        ref_seq=str(self.reference[target_chrom][target_start:target_end].seq)
+        alt_seq=self.alt[target_chrom][target_start:target_end]
+        ## Melt both
+        umelt = um.UmeltService()
+        refmelt = um.MeltSeq(ref_seq)
+        altmelt=um.MeltSeq(alt_seq)
+        ref_melt_Tm = umelt.get_helicity_info(umelt.get_response(refmelt)).get_melting_temp()
+        alt_melt_Tm = umelt.get_helicity_info(umelt.get_response(altmelt)).get_melting_temp()
+        return (ref_melt_Tm,alt_melt_Tm)
+
 
 
 def designfromvcf(bedtargets, VCFdesigner, max_size, min_size):
