@@ -17,11 +17,20 @@ Installation
 ============
 
 - create and activate  a clean Python 3xx env
+
 e.g.
 ```
-conda create -y -n Py3PCRtest python=3.5  numpy
+
+conda create -y -n Py3PCRtest python=3.5  numpy cython bedtools
 source activate  Py3PCRtest
 ```
+
+
+- optionally append jupyter notebook (or just ipykernel ) for usage in notebooks
+```
+conda install  jupyter notebook
+```
+
 - pull this repo
 
 ```

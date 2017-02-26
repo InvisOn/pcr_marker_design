@@ -85,20 +85,20 @@ class VcfPrimerDesign:
         self.genome = re.sub("fasta$", "fasta.fai", re.sub("fa$", "fa.fai", self.reference.filename))
 
     def getseqslicedict(self, target, max_size, flanking=True):
-        """Pass a bed target to a designer and get a dictionary
+        """Pass an interval target to a designer and get a dictionary
         slice that we can pass to P3. Default is for design flanking a target.
         """
         if flanking:
             target_int = target.slop(b=max_size, g=self.genome)
         else:
             target_int = target
-        target_chrom = target[0].chrom
+        target_chrom = target[0].chrom ## DOH need 0 index because this is interval not bedTool
         target_start = target_int[0].start
         target_end = target_int[0].end
         offset = target_int[0].start
         sldic = dict(SEQUENCE_ID=target_chrom + ":" + str(target_start) + "-" + str(target_end))
         sldic['REF_OFFSET'] = offset
-        sldic['TARGET_ID'] = target_chrom + ":" + str(target[0].start) + "-" + str(target[0].end)
+        sldic['TARGET_ID'] = target_chrom + ":" + str(target[0].start + 1 ) + "-" + str(target[0].end)
         sldic['SEQUENCE_TEMPLATE'] = str(self.reference[target_chrom][target_start:target_end].seq)
         slice_vars = [target_chrom + " " + str(X.start) + " " + str(X.end) for
                       X in self.annot.fetch(target_chrom, target_start, target_end)]
