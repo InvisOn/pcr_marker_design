@@ -84,29 +84,31 @@ class VcfPrimerDesign:
         self.desc = desc
         self.genome = re.sub("fasta$", "fasta.fai", re.sub("fa$", "fa.fai", self.reference.filename))
 
-    def getseqslicedict(self, target, max_size, flanking=True):
+    def getseqslicedict(self, target_interval , max_size, flanking=True):
         """Pass an interval target to a designer and get a dictionary
         slice that we can pass to P3. Default is for design flanking a target.
         """
         if flanking:
-            target_int = target.slop(b=max_size, g=self.genome)
+            lst=[target_interval.chrom,target_interval.start,target_interval.stop]
+            target_interval_bed=BedTool("\t".join([str(X) for X in lst]),from_string=True)
+            target_int = target_interval_bed.slop(b=max_size, g=self.genome)[0]
         else:
-            target_int = target
-        target_chrom = target[0].chrom ## DOH need 0 index because this is interval not bedTool
-        target_start = target_int[0].start
-        target_end = target_int[0].end
-        offset = target_int[0].start
+            target_int = target_interval
+        target_chrom = target_int.chrom
+        target_start = target_int.start
+        target_end = target_int.end
+        offset = target_int.start
         sldic = dict(SEQUENCE_ID=target_chrom + ":" + str(target_start) + "-" + str(target_end))
         sldic['REF_OFFSET'] = offset
-        sldic['TARGET_ID'] = target_chrom + ":" + str(target[0].start + 1 ) + "-" + str(target[0].end)
+        sldic['TARGET_ID'] = target_chrom + ":" + str(target_interval.start + 1 ) + "-" + str(target_interval.end)
         sldic['SEQUENCE_TEMPLATE'] = str(self.reference[target_chrom][target_start:target_end].seq)
         slice_vars = [target_chrom + " " + str(X.start) + " " + str(X.end) for
                       X in self.annot.fetch(target_chrom, target_start, target_end)]
         slice_annot = BedTool("\n".join(slice_vars), from_string=True)
-        slice_annot = slice_annot - target
+        slice_annot = slice_annot - target ### Check this!!!
         sldic['SEQUENCE_EXCLUDED_REGION'] = [(X.start - target_start, X.length) for X in slice_annot]
         if flanking:
-            sldic['SEQUENCE_TARGET'] = (target[0].start - target_start, target[0].length)
+            sldic['SEQUENCE_TARGET'] = (target_int.start - target_start, target_int.length)
         return sldic
 
     def meltSlice(self, region):
