@@ -26,6 +26,7 @@ from pcr_marker_design import  umelt_service as um
 
 import vcf
 import re
+import warnings
 
 
 class PrimerDesign:
@@ -79,7 +80,9 @@ class VcfPrimerDesign:
         """
         self.reference = Fasta(reference)
         ## Following to be gagged https://docs.python.org/2/library/warnings.html#temporarily-suppressing-warnings
-        self.alt=FastaVariant(reference,vcf_file,het=True, hom=True,sample=None, as_raw=True)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            self.alt=FastaVariant(reference,vcf_file,het=True, hom=True,sample=None, as_raw=True)
         self.annot = vcf.Reader(filename=vcf_file) ## Do we need bot of these? FastaVariant may suffice for snps
         self.desc = desc
         self.genome = re.sub("fasta$", "fasta.fai", re.sub("fa$", "fa.fai", self.reference.filename))
