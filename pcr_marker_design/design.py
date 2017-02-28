@@ -84,31 +84,38 @@ class VcfPrimerDesign:
         self.desc = desc
         self.genome = re.sub("fasta$", "fasta.fai", re.sub("fa$", "fa.fai", self.reference.filename))
 
-    def getseqslicedict(self, target_interval , max_size, flanking=True):
+    def getseqslicedict(self, interval , max_size, flanking=True):
         """Pass an interval target to a designer and get a dictionary
         slice that we can pass to P3. Default is for design flanking a target.
         """
+        ## Grab a slice for design
         if flanking:
-            lst=[target_interval.chrom,target_interval.start,target_interval.stop]
-            target_interval_bed=BedTool("\t".join([str(X) for X in lst]),from_string=True)
-            target_int = target_interval_bed.slop(b=max_size, g=self.genome)[0]
+            lst=[interval.chrom,interval.start,interval.stop]
+            interval_bed=BedTool("\t".join([str(X) for X in lst]),from_string=True)
+            target_int = interval_bed.slop(b=max_size, g=self.genome)[0]
         else:
-            target_int = target_interval
+            target_int = interval
         target_chrom = target_int.chrom
         target_start = target_int.start
         target_end = target_int.end
-        offset = target_int.start
+        offset = target_int.start  ## so we can adjust against the reference
+        ### this ID is for the slice passed for design
         sldic = dict(SEQUENCE_ID=target_chrom + ":" + str(target_start) + "-" + str(target_end))
         sldic['REF_OFFSET'] = offset
-        sldic['TARGET_ID'] = target_chrom + ":" + str(target_interval.start + 1 ) + "-" + str(target_interval.end)
+        ### This id is for the original target
+        sldic['TARGET_ID'] = target_chrom + ":" + str(interval.start + 1 ) + "-" + str(interval.end)
+        ### Cut out the sequence from the index
         sldic['SEQUENCE_TEMPLATE'] = str(self.reference[target_chrom][target_start:target_end].seq)
+        ### Build a list of the variant features for masking
         slice_vars = [target_chrom + " " + str(X.start) + " " + str(X.end) for
                       X in self.annot.fetch(target_chrom, target_start, target_end)]
+        ### and turn these into a bedtool
         slice_annot = BedTool("\n".join(slice_vars), from_string=True)
-        slice_annot = slice_annot - target ### Check this!!!
-        sldic['SEQUENCE_EXCLUDED_REGION'] = [(X.start - target_start, X.length) for X in slice_annot]
+        ### Remove any annotations overlapping with target
+        slice_annot = slice_annot.subtract(interval_bed,A=True) ### Check this!!!
+        sldic['SEQUENCE_EXCLUDED_REGION'] = [(X.start - offset, X.length) for X in slice_annot]
         if flanking:
-            sldic['SEQUENCE_TARGET'] = (target_int.start - target_start, target_int.length)
+            sldic['SEQUENCE_TARGET'] = (max_size, interval.length)
         return sldic
 
     def meltSlice(self, region):
