@@ -106,7 +106,7 @@ class VcfPrimerDesign:
         sldic = dict(SEQUENCE_ID=target_chrom + ":" + str(target_start) + "-" + str(target_end))
         sldic['REF_OFFSET'] = offset
         ### This id is for the original target
-        sldic['TARGET_ID'] = target_chrom + ":" + str(interval.start + 1 ) + "-" + str(interval.end)
+        sldic['TARGET_ID'] = target_chrom + ":" + str(interval.start ) + "-" + str(interval.end-1)
         ### Cut out the sequence from the index
         sldic['SEQUENCE_TEMPLATE'] = str(self.reference[target_chrom][target_start:target_end].seq)
         ### Build a list of the variant features for masking
