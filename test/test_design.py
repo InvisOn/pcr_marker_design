@@ -1,6 +1,6 @@
 import pytest
 from pcr_marker_design import design as d
-from pybedtools import BedTool
+from pybedtools import BedTool, Interval
 from pyfaidx import Fasta
 
 
@@ -30,12 +30,12 @@ class TestDesign:
         test_seq = "./test/test-data/AcCHR1_test.fasta"
         vcffile = "./test/test-data/AcCHR1_test.vcf.gz"
         designer = d.VcfPrimerDesign(test_seq, vcffile, "TestCHR1")
-        target = BedTool('CHR1 3000 3001', from_string=True)
+        target = Interval('CHR1',3000,3001)
         max_size = 100
         target_dic = {'REF_OFFSET': 2900,
  'SEQUENCE_EXCLUDED_REGION': [(7, 1), (26, 1), (65, 1), (93, 1), (139, 1)],
  'SEQUENCE_ID': 'CHR1:2900-3101',
  'SEQUENCE_TARGET': (100, 1),
  'SEQUENCE_TEMPLATE': 'AGGAAATAAATAAATATGGAATAAAACATTGATATTACAAATAAAGGGTGCTTCTAGCTGAGTAGTCCTCCGATAAAGCACACGCATACAAAGGAATGAGAGAGAGAGAGAGAGGCGCTACCACATATAAAAGGGACAGCAAACATTTTAACATGAGCAAATCAGTGACACTAGGTAGGTGTTAGCACAAAAATGAACCTT',
- 'TARGET_ID': 'CHR1:3000-3001'}
+ 'TARGET_ID': 'CHR1:3000-3000'}
         assert designer.getseqslicedict(target, max_size) == target_dic
