@@ -1,0 +1,21 @@
+usage: design_bash.py [-h] -f REFERENCE -a ANNOTATION -d DESCRIPTION
+                      [-T TARGETS] [-o OUTPUT_DIRECTORY]
+                      [-p3_globals P3_GLOBALS]
+                      [-amplicon_size_range AMPLICON_SIZE_RANGE AMPLICON_SIZE_RANGE]
+                      [-primer_size_range PRIMER_SIZE_RANGE PRIMER_SIZE_RANGE]
+                      [-r REGION] [-R REGION_FILE] [-interactive]
+design_bash.py: error: argument -amplicon_size_range: expected 2 arguments
+usage: design_bash.py [-h] -f REFERENCE -a ANNOTATION -d DESCRIPTION
+                      [-T TARGETS] [-o OUTPUT_DIRECTORY]
+                      [-p3_globals P3_GLOBALS]
+                      [-amplicon_size_range AMPLICON_SIZE_RANGE AMPLICON_SIZE_RANGE]
+                      [-primer_size_range PRIMER_SIZE_RANGE PRIMER_SIZE_RANGE]
+                      [-r REGION] [-R REGION_FILE] [-interactive]
+design_bash.py: error: argument -amplicon_size_range: expected 2 arguments
+usage: design_bash.py [-h] -f REFERENCE -a ANNOTATION -d DESCRIPTION
+                      [-T TARGETS] [-o OUTPUT_DIRECTORY]
+                      [-p3_globals P3_GLOBALS]
+                      [-amplicon_size_range AMPLICON_SIZE_RANGE AMPLICON_SIZE_RANGE]
+                      [-primer_size_range PRIMER_SIZE_RANGE PRIMER_SIZE_RANGE]
+                      [-r REGION] [-R REGION_FILE] [-interactive]
+design_bash.py: error: argument -amplicon_size_range: expected 2 arguments

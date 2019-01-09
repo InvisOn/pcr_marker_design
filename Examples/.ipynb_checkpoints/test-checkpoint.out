@@ -1,0 +1,36 @@
+reference=/output/genomic/plant/Actinidia/chinensis/CK51F3_01/Genome/Assembly/PS1/1.68.5/AllChromosomes/PS1.1.68.5.fasta
+annotation=/output/genomic/plant/Actinidia/chinensis/Resequencing/Variants/PS1.1.68.5/52DiploidGenomes/Combined_diploidCK_basic_NS30_Q50_SAFR3_DP50_PAIR0.8_PS1.1.68.5_ann.vcf.gz
+description=PS1.1.68.5
+targets=/tmp/pybedtools._nlm8alh.tmp
+output_directory=stdout
+p3_globals=None
+amplicon_size_range=[40, 240]
+primer_size_range=None
+region=None
+region_file=None
+interactive=False
+{'REF_OFFSET': 603925, 'CHROMOSOME': 'CHR1', 'PRIMER_LEFT_EXPLAIN': 'considered 341, overlap excluded region 2, GC content failed 17, low tm 303, ok 19', 'PRIMER_RIGHT_EXPLAIN': 'considered 61, overlap excluded region 61, ok 0', 'PRIMER_INTERNAL_EXPLAIN': 'considered 0, ok 0', 'PRIMER_PAIR_EXPLAIN': 'considered 0, ok 0', 'PRIMER_LEFT_NUM_RETURNED': 0, 'PRIMER_RIGHT_NUM_RETURNED': 0, 'PRIMER_INTERNAL_NUM_RETURNED': 0, 'PRIMER_PAIR_NUM_RETURNED': 0}
+reference=/output/genomic/plant/Actinidia/chinensis/CK51F3_01/Genome/Assembly/PS1/1.68.5/AllChromosomes/PS1.1.68.5.fasta
+annotation=/output/genomic/plant/Actinidia/chinensis/Resequencing/Variants/PS1.1.68.5/52DiploidGenomes/Combined_diploidCK_basic_NS30_Q50_SAFR3_DP50_PAIR0.8_PS1.1.68.5_ann.vcf.gz
+description=PS1.1.68.5
+targets=/tmp/pybedtools.rexbenbs.tmp
+output_directory=stdout
+p3_globals=None
+amplicon_size_range=[1695, 1895]
+primer_size_range=None
+region=None
+region_file=None
+interactive=False
+{'REF_OFFSET': 570765, 'CHROMOSOME': 'CHR1', 'PRIMER_LEFT_EXPLAIN': 'considered 171, overlap excluded region 42, GC content failed 3, low tm 126, ok 0', 'PRIMER_RIGHT_EXPLAIN': 'considered 116, overlap excluded region 53, GC content failed 63, ok 0', 'PRIMER_INTERNAL_EXPLAIN': 'considered 0, ok 0', 'PRIMER_PAIR_EXPLAIN': 'considered 0, ok 0', 'PRIMER_LEFT_NUM_RETURNED': 0, 'PRIMER_RIGHT_NUM_RETURNED': 0, 'PRIMER_INTERNAL_NUM_RETURNED': 0, 'PRIMER_PAIR_NUM_RETURNED': 0}
+reference=/output/genomic/plant/Actinidia/chinensis/CK51F3_01/Genome/Assembly/PS1/1.68.5/AllChromosomes/PS1.1.68.5.fasta
+annotation=/output/genomic/plant/Actinidia/chinensis/Resequencing/Variants/PS1.1.68.5/52DiploidGenomes/Combined_diploidCK_basic_NS30_Q50_SAFR3_DP50_PAIR0.8_PS1.1.68.5_ann.vcf.gz
+description=PS1.1.68.5
+targets=/tmp/pybedtools.fl6h7sjd.tmp
+output_directory=stdout
+p3_globals=None
+amplicon_size_range=[6030, 6230]
+primer_size_range=None
+region=None
+region_file=None
+interactive=False
+{'REF_OFFSET': 566430, 'CHROMOSOME': 'CHR1', 'PRIMER_LEFT_EXPLAIN': 'considered 306, overlap excluded region 9, GC content failed 16, low tm 139, high tm 38, ok 104', 'PRIMER_RIGHT_EXPLAIN': 'considered 116, overlap excluded region 53, GC content failed 63, ok 0', 'PRIMER_INTERNAL_EXPLAIN': 'considered 0, ok 0', 'PRIMER_PAIR_EXPLAIN': 'considered 0, ok 0', 'PRIMER_LEFT_NUM_RETURNED': 0, 'PRIMER_RIGHT_NUM_RETURNED': 0, 'PRIMER_INTERNAL_NUM_RETURNED': 0, 'PRIMER_PAIR_NUM_RETURNED': 0}
