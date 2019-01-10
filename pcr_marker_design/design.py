@@ -110,8 +110,9 @@ class VcfPrimerDesign:
         ### Cut out the sequence from the index
         sldic['SEQUENCE_TEMPLATE'] = str(self.reference[target_chrom][target_start:target_end].seq)
         ### Build a list of the variant features for masking
-        slice_vars = [target_chrom + " " + str(X.start) + " " + str(X.end) for
-                      X in self.annot.fetch(target_chrom, target_start, target_end)]
+        slice_vars = [target_chrom + " " + str(max(X.start,target_start)) + " " + str(min(X.end,target_int.end)) \
+                      for X in self.annot.fetch(target_chrom, target_start - 200, target_end) \
+                      if X.end > target_start]  # <----  Quick fix here. Need more work
         ### and turn these into a bedtool
         slice_annot = BedTool("\n".join(slice_vars), from_string=True)
         ### Remove any annotations overlapping with target
