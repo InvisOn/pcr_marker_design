@@ -1,10 +1,18 @@
+# Gabriel Besombes January 2019
+
+# Tests for the different elements of design.py.
+# These can all be executed using the "python -m pytest" command in a bash shell
+
 import pytest
+import pyfaidx as pf
+from Bio.Seq import Seq
 from design import *
 
 reference = "/output/genomic/plant/Actinidia/chinensis/CK51F3_01/Genome/Assembly/PS1/1.68.5/AllChromosomes/PS1.1.68.5.fasta"
 annotations = "/output/genomic/plant/Actinidia/chinensis/Resequencing/Variants/PS1.1.68.5/52DiploidGenomes/Combined_diploidCK_basic_NS30_Q50_SAFR3_DP50_PAIR0.8_PS1.1.68.5_ann.vcf.gz"
 description = "PS1.1.68.5"
-targets = "./test/test-data/targets.bed"
+targets = "test_targets.bed"
+# targets = "./test/test-data/targets.bed"
     
 
 def test_PrimerDesign_init():
@@ -20,8 +28,8 @@ def test_PrimerDesign_init():
                             primer_size_range=(18, 25),
                             p3_globals=None)
     
-    assert designer.amplicon_size_range == (100, 500)
-    assert designer.primer_size_range == (18, 25)
+    assert(designer.amplicon_size_range == (100, 500))
+    assert(designer.primer_size_range == (18, 25))
     # Needs other asserts
     
     
@@ -29,58 +37,65 @@ def test_gettargetdict():
     """
     pass
     """
-    designer = PrimerDesign(reference_file=reference,
-                            annotation_file=annotations,
-                            description=description,
-                            targets_file=targets,
-                            output_dir=None,
-                            amplicon_size_range=(100, 500),
-                            primer_size_range=(18, 25),
-                            p3_globals=None)
-    for targ in d.targets.fetch():
-        d = designer.gettargetdict([targ.chrom, targ.start, targ.stop])
+    i = 0
+    targets_file = pb.BedTool(targets)
+    for target in targets_file:
+        designer = PrimerDesign(reference_file=reference,
+                                annotation_file=annotations,
+                                description=description,
+                                targets_file=pb.BedTool("{} {} {}".format(target.chrom,
+                                                                          target.start,
+                                                                          target.stop),
+                                                        from_string=True).fn,
+                                output_dir=None,
+                                amplicon_size_range=(int(target.stop-target.start-100),
+                                                     int(target.stop-target.start+600)),
+                                primer_size_range=(18, 25),
+                                p3_globals=None)
+        d = designer.gettargetdict([target.chrom, target.start, target.stop])
+        start = max(0,
+                    target.stop + designer.primer_size_range[0] - designer.amplicon_size_range[1])
+        stop = min(len(designer.reference[target.chrom]),
+                   target.start - designer.primer_size_range[0] + designer.amplicon_size_range[1])
+        assert(start == d["REF_OFFSET"])
+        assert(designer.reference[target.chrom][start:stop].seq == d["SEQUENCE_TEMPLATE"])
+        for excl in d["SEQUENCE_EXCLUDED_REGION"]:
+            s = start + excl[0]
+            e = start + excl[0] + excl[1]
+            annots = [X for X in designer.annotations.fetch(target.chrom, s, e)]
+            assert(len(annots) == 1 and
+                   excl[1] <= annots[0].stop - annots[0].start)
+        if i == 100:
+            break
+        i += 1
+            
 
-# class TestDesign:
+def test_gettargetdict():
+    """
+    pass
+    """
+    pass
 
-#     def test_getseqslicedict(self):
-#         """
-#         Get dict suitable for primer3
-#         """
-#         test_seq = "./test/test-data/targets.fasta"
-#         annfile = "./test/test-data/targets.snps.bed"
-#         designer = d.PrimerDesign(test_seq, annfile, "Designer Test")
-#         target = BedTool("k69_93535 1146 1147", from_string=True)
-#         max_size = 250
-#         target_dic = {'REF_OFFSET': 896,
-#  'SEQUENCE_EXCLUDED_REGION': [(244, 1), (439, 1)],
-#  'SEQUENCE_ID': 'Designer Test',
-#  'SEQUENCE_TARGET': (250, 1),
-#  'SEQUENCE_TEMPLATE': 'AAATAATGGAGAATAGATGGTTCAAGAATGGATTCGAGCCTGTGAAATATTACATTGAGAATGATAGGTTTCATAAGTGGTGTAGCTTAGACGAAGAGAATGCTAATGACAACGAGGAGGTAGAATCTGGAGATGAATCAGACTCTTCAGTTGCTTCCTGCCCTCCTACACTTAATGAAGGAAAGAAAAAAAGGACAGGGAAGCTTCATAGGCCTTTGAGTCTGAACGCATTTGACATAATTTCCTTTTCCAGAGGATTTGATCTTTCAGGTTTGTTTGAAGAAACGGGAGATGAAACAAGATTTGTGTCGGGTGAAACGATACCAAACATCATATCGAAATTGGAGGAGATTGCAAAAGTGGGTAGTTTCACGTTTAGGAAGAAGGATTGTAGGGTTAGTTTAGAAGGAACGCGAGAAGGAGTGAAGGGCCCTCTTACGATTGGAGCTGAGATATTTGAGCTTACGCCTAGTTTGGTTGTTGTTGAGCTTAAGAAGAAAG',
-#  'TARGET_ID': 'k69_93535:1147-1147'}
-#         assert designer.getseqslicedict(target, max_size) == target_dic
+def test_run_p3():
+    """
+    pass
+    """
+    pass
 
-#     def test_getVCFseqslicedict(self):
-#         """
-#         Get dict suitable for primer3 from vcf reader
-#         """
-#         test_seq = "./test/test-data/AcCHR1_test.fasta"
-#         vcffile = "./test/test-data/AcCHR1_test.vcf.gz"
-#         designer = d.VcfPrimerDesign(test_seq, vcffile, "TestCHR1")
-#         target = Interval('CHR1',3000,3001)
-#         max_size = 307
-#         target_dic = {'REF_OFFSET': 2693,
-#  'SEQUENCE_EXCLUDED_REGION': [(100, 1),
-#                               (179, 1),
-#                               (214, 1),
-#                               (233, 1),
-#                               (272, 1),
-#                               (300, 1),
-#                               (346, 1),
-#                               (468, 1),
-#                               (529, 1),
-#                               (613, 2)],
-#  'SEQUENCE_ID': 'CHR1:2693-3308',
-#  'SEQUENCE_TARGET': (307, 1),
-#  'SEQUENCE_TEMPLATE': 'GGTTGGTCTATTCATCATTGCTCCTAACGCATTCCTCATGGCAATCTGCATTGCTGCCTCAATTTCTTTAGAAGCTTCCAGAGTTGTTGAATTGGCAGCGGCAACTACAGTCGCAACTGTTCCTAGCTTTGCAGAACCATTCCCACTCAAGGAATTCACGGACTCTTTATGTGCCTTCAGAACCAACTGTGTCGCACTGGGTTTTAAAGGAAATAAATAAATATGGAATAAAACATTGATATTACAAATAAAGGGTGCTTCTAGCTGAGTAGTCCTCCGATAAAGCACACGCATACAAAGGAATGAGAGAGAGAGAGAGAGGCGCTACCACATATAAAAGGGACAGCAAACATTTTAACATGAGCAAATCAGTGACACTAGGTAGGTGTTAGCACAAAAATGAACCTTGTTTACATCTGTTCACCACATCCTAGAACATCTTAGACACACACTGCAATAACATATGAGGTGGAGCATGGCACAGTGATACTGCAACAGTAGGATTCCCTGTAACTCTAATGCAACTTTTCATGTACTCAGCCTCTCAAATGATATCGCATGACAAAGTAAAATTAGGTTTTTTTAACTTTTAAACAATAAAACATGAAATTGGAA',
-#  'TARGET_ID': 'CHR1:3000-3000'}
-#         assert designer.getseqslicedict(target, max_size) == target_dic
+def test_cleanoutput():
+    """
+    pass
+    """
+    pass
+
+def test_auto():
+    """
+    pass
+    """
+    pass
+
+def test_gettargets():
+    """
+    pass
+    """
+    pass

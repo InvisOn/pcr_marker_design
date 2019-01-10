@@ -1,14 +1,25 @@
+# Gabriel Besombes January 2019
 
+# This file includes all of the analysis functions to be associated with the
+# Wrapper class in wrapper.py
 
 import re
 
 def pi(annots):
+    """
+    Calculate the nucleotide diversity for the given annotation.
+    annots must be a pyvcf _Record.
+    """
     if all((X.call_rate for X in annots)):
         return(sum([X.nucl_diversity for X in annots if X.nucl_diversity != None]))
 
 
 
 def find_SSR(st,past_ind=0):
+    """
+    Find the repeating patterns in the string st and return a dictionnary as:
+    {"pattern": [number_of_repeats, number_of_repeats, ...], ...}
+    """
     
     result = {}
     m = re.search(r'(.+)\1+',st) # Finds longest repeating string from start
@@ -44,6 +55,14 @@ def find_SSR(st,past_ind=0):
     
     
 def SSR_count(annots):
+    """
+    Find all the repeating patterns in the different variants
+    using find_SSR and assemble them in a dictionnary as:
+    {
+    "CHR:start-stop": {"pattern":[number_of_repeats, number_of_repeats, ...], ...}, ...
+    }
+    annots must be a pyvcf _Record.
+    """
     d = {}
     for rec in annots:
         for alt in rec.ALT:
@@ -63,4 +82,8 @@ def SSR_count(annots):
 
 
 def min_call_rate(annots):
+    """
+    Calculate the minimum call rate for the given annotation.
+    annots must be a pyvcf _Record.
+    """
     return(min([X.call_rate for X in annots]))

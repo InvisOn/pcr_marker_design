@@ -1,5 +1,6 @@
+# Gabriel Besombes January 2019
 
-
+# This file only includes the PrimerDesign class.
 
 import pybedtools as pb
 import pandas as pd
@@ -9,7 +10,7 @@ import vcf
 import re
 import primer3 as p3
 import os
-from wraper import *
+from wrapper import *
 
 
 
@@ -20,9 +21,9 @@ class PrimerDesign:
     """
     
     def __init__(self, 
-                 reference_file, 
-                 annotation_file, 
+                 reference_file,
                  description, 
+                 annotation_file=None,
                  targets_file=None, 
                  output_dir=None,
                  amplicon_size_range=None,
@@ -72,8 +73,12 @@ class PrimerDesign:
         """
         # Set the reference, annotations and description using the setter methods
         self.reference = reference_file
-        self.annotations = annotation_file
         self.description = description
+        if annotation_file:
+            self.annotations = annotation_file
+            self._has_annotations = True
+        else:
+            self._has_annotations = False
         
         # Set the amplicon and primer size range to the default or given values
         if not amplicon_size_range:
@@ -151,21 +156,21 @@ class PrimerDesign:
         return(self._ref)
     @reference.setter
     def reference(self, reference_file):
-        self._ref = Wraper(reference_file, "reference")
+        self._ref = Wrapper(reference_file, "reference")
         
     @property
     def annotations(self):
         return(self._ann)
     @annotations.setter
     def annotations(self, annotation_file):
-        self._ann = Wraper(annotation_file, "annotations")
+        self._ann = Wrapper(annotation_file, "annotations")
         
     @property
     def targets(self):
         return(self._tar)
     @targets.setter
     def targets(self, targets_file):
-        self._tar = Wraper(targets_file, "targets")
+        self._tar = Wrapper(targets_file, "targets")
         
     def gettargetdict(self, target):
         """
@@ -180,18 +185,18 @@ class PrimerDesign:
 Make sure to use targets that were designed with the same amplicon and primer size range:
             - amplicon size range = {}
             - primer size range = {}""".format(target, self.amplicon_size_range, self.primer_size_range))
-        
-        # Check the annotation type
-        elif self.annotations.type == "vcf":
-            # Slop around the target and cut the parts that are outside of the chromosome
-            # to make the working interval for the design
-            interval = (max(0,
-                            end+self.primer_size_range[0]-self.amplicon_size_range[1]),
-                        min(len(self.reference[chrom]),
-                            start-self.primer_size_range[0]+self.amplicon_size_range[1]))
             
-            # Create a list of regions to exclude for the design
-            l=[]
+        # List of regions to exclude for the design
+        l=[]
+        
+        # Slop around the target and cut the parts that are outside of the chromosome
+        # to make the working interval for the design
+        interval = (max(0,
+                        end+self.primer_size_range[0]-self.amplicon_size_range[1]),
+                    min(len(self.reference[chrom]),
+                        start-self.primer_size_range[0]+self.amplicon_size_range[1]))
+        
+        if self._has_annotations:
             for rec in self.annotations.fetch(chrom, interval[0], interval[1]):
                 # If the start of the feature is before the start of the target
                 if rec.start < start:
@@ -206,15 +211,15 @@ Make sure to use targets that were designed with the same amplicon and primer si
                     # Add the part of the feature that is inbetween the target and the end of the interval
                     l.append((rec_start-interval[0], rec_end-rec_start))
             
-            # Return the corresponding dictionnary for primer3
-            return({
-                "SEQUENCE_ID": self.description,
-                "TARGET_ID": "{}:{}-{}".format(chrom, start, end),
-                "REF_OFFSET": interval[0],
-                "SEQUENCE_TEMPLATE": str(self.reference[chrom][interval[0]:interval[1]].seq),
-                "SEQUENCE_TARGET": (start - interval[0], end - start),
-                "SEQUENCE_EXCLUDED_REGION": l
-            })
+        # Return the corresponding dictionnary for primer3
+        return({
+            "SEQUENCE_ID": self.description,
+            "TARGET_ID": "{}:{}-{}".format(chrom, start, end),
+            "REF_OFFSET": interval[0],
+            "SEQUENCE_TEMPLATE": str(self.reference[chrom][interval[0]:interval[1]].seq),
+            "SEQUENCE_TARGET": (start - interval[0], end - start),
+            "SEQUENCE_EXCLUDED_REGION": l
+        })
         
     
     def run_p3(self, region=None):
@@ -235,7 +240,7 @@ Make sure to use targets that were designed with the same amplicon and primer si
                     l[-1]["REF_OFFSET"] = target_dict["REF_OFFSET"]
                     l[-1]["CHROMOSOME"] = targ.chrom
 
-                self.p3_out.append(pd.DataFrame(l), ignore_index=True)
+                self.p3_out = self.p3_out.append(pd.DataFrame(l), ignore_index=True)
 
             else:
                 l = []
@@ -247,10 +252,25 @@ Make sure to use targets that were designed with the same amplicon and primer si
                             l.append(p3.bindings.designPrimers(target_dict, self.p3_globals))
                             l[-1]["REF_OFFSET"] = target_dict["REF_OFFSET"]
                             l[-1]["CHROMOSOME"] = targ.chrom
-
-                self.p3_out.append(pd.DataFrame(l), ignore_index=True)
+                            
+                self.p3_out = self.p3_out.append(pd.DataFrame(l), ignore_index=True)
                 
         else:
+            # Create the header for the csv format exportation on stdout
+            targ = self.targets[0]
+            columns = [
+                'REF_OFFSET', 'CHROMOSOME', 'PRIMER_LEFT_EXPLAIN', 'PRIMER_RIGHT_EXPLAIN', 'PRIMER_INTERNAL_EXPLAIN', 'PRIMER_PAIR_EXPLAIN', 'PRIMER_LEFT_NUM_RETURNED', 'PRIMER_RIGHT_NUM_RETURNED', 'PRIMER_INTERNAL_NUM_RETURNED', 'PRIMER_PAIR_NUM_RETURNED'
+            ]
+            each = [
+                'PRIMER_PAIR_0_PENALTY', 'PRIMER_LEFT_0_PENALTY', 'PRIMER_RIGHT_0_PENALTY', 'PRIMER_INTERNAL_0_PENALTY', 'PRIMER_LEFT_0_SEQUENCE', 'PRIMER_RIGHT_0_SEQUENCE', 'PRIMER_INTERNAL_0_SEQUENCE', 'PRIMER_LEFT_0', 'PRIMER_RIGHT_0', 'PRIMER_INTERNAL_0', 'PRIMER_LEFT_0_TM', 'PRIMER_RIGHT_0_TM', 'PRIMER_INTERNAL_0_TM', 'PRIMER_LEFT_0_GC_PERCENT', 'PRIMER_RIGHT_0_GC_PERCENT', 'PRIMER_INTERNAL_0_GC_PERCENT', 'PRIMER_LEFT_0_SELF_ANY_TH', 'PRIMER_RIGHT_0_SELF_ANY_TH', 'PRIMER_INTERNAL_0_SELF_ANY_TH', 'PRIMER_LEFT_0_SELF_END_TH', 'PRIMER_RIGHT_0_SELF_END_TH', 'PRIMER_INTERNAL_0_SELF_END_TH', 'PRIMER_LEFT_0_HAIRPIN_TH', 'PRIMER_RIGHT_0_HAIRPIN_TH', 'PRIMER_INTERNAL_0_HAIRPIN_TH', 'PRIMER_LEFT_0_END_STABILITY', 'PRIMER_RIGHT_0_END_STABILITY', 'PRIMER_PAIR_0_COMPL_ANY_TH', 'PRIMER_PAIR_0_COMPL_END_TH', 'PRIMER_PAIR_0_PRODUCT_SIZE'
+            ]
+            for i in range(0, self.p3_globals['PRIMER_NUM_RETURN']):
+                for key in each:
+                    columns.append(key.replace("0", str(i)))
+            
+            # Print the header of the csv
+            print("\"{}\"".format("\",\"".join(columns)))
+            
             if not region:
                 for targ in self.targets.fetch():
                     target_dict = self.gettargetdict([targ.chrom, targ.start, targ.stop])
@@ -259,7 +279,7 @@ Make sure to use targets that were designed with the same amplicon and primer si
                         "CHROMOSOME": targ.chrom
                     }
                     d.update(p3.bindings.designPrimers(target_dict, self.p3_globals))
-                    print(d)
+                    print("\"{}\"".format("\",\"".join([str(d[X]) if X in d else "Nan" for X in columns])))
 
             else:
                 for chrom in region:
@@ -267,10 +287,13 @@ Make sure to use targets that were designed with the same amplicon and primer si
                         start, end = interval
                         for targ in self.targets.fetch(chrom, start, end):
                             target_dict = self.gettargetdict([targ.chrom, targ.start, targ.stop])
-                            l.append(p3.bindings.designPrimers(target_dict, self.p3_globals))
-                            l[-1]["REF_OFFSET"] = target_dict["REF_OFFSET"]
-                            l[-1]["CHROMOSOME"] = targ.chrom
-                            print("\"{}\"".format("\",\"".join([str(X) for X in l])))
+                            d = {
+                                "REF_OFFSET": target_dict["REF_OFFSET"],
+                                "CHROMOSOME": targ.chrom
+                            }
+                            d.update(p3.bindings.designPrimers(target_dict, self.p3_globals))
+                            print("\"{}\"".format("\",\"".join([str(d[X]) if X in d else "Nan" for X in columns])))
+
 
         
     def cleanoutput(self, columns=None):
@@ -341,7 +364,7 @@ Make sure to use targets that were designed with the same amplicon and primer si
                                                               self.targets.name),
                                  columns=["CHROMOSOME", "START", "END"],
                                  header=False, index=False, sep="\t")
-        self.amplicons = Wraper("{}/amplicons_{}.bed".format(self.output_dir,
+        self.amplicons = Wrapper("{}/amplicons_{}.bed".format(self.output_dir,
                                                               self.targets.name),
                                 "targets")
         
@@ -361,7 +384,7 @@ Make sure to use targets that were designed with the same amplicon and primer si
                                                           self.targets.name),
                                columns=["CHROMOSOME", "START", "END"],
                                header=False, index=False, sep="\t")
-        self.primers = Wraper("{}/primers_{}.bed".format(self.output_dir,
+        self.primers = Wrapper("{}/primers_{}.bed".format(self.output_dir,
                                                         self.targets.name),
                               "targets")
     
@@ -375,7 +398,7 @@ Make sure to use targets that were designed with the same amplicon and primer si
         """
         if not self._have_targets:
             self.gettargets(region=region, write="targets.bed")
-            self.targets = "{}/targets.bed".format(self.output_dir)
+            self.targets = "targets.bed"
             self._have_targets = True
         self.run_p3(region=region)
         self.cleanoutput()
@@ -435,7 +458,7 @@ Make sure to use targets that were designed with the same amplicon and primer si
             f.close()
         else:
             return(l2)
-    
+        
     def targetsanalyse(self, SSRs=True, SSRs_variants=True, PI=True, call_rate=True, write=False):
         """
         Analyse the targets bed file according to parameters and using
