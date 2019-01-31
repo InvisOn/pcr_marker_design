@@ -318,11 +318,12 @@ Make sure to use targets that were designed with the same amplicon and primer si
                     row["PRIMER_LEFT_" + str(j)][0] + row["REF_OFFSET"],
                     row["PRIMER_LEFT_" + str(j)][0] + row["REF_OFFSET"] + row["PRIMER_LEFT_" + str(j)][1]
                 )
-                amplicon["PRIMER_INTERNAL_REGION"] = "{}:{}-{}".format(
-                    row["CHROMOSOME"],
-                    row["PRIMER_INTERNAL_" + str(j)][0] + row["REF_OFFSET"],
-                    row["PRIMER_INTERNAL_" + str(j)][0] + row["REF_OFFSET"] + row["PRIMER_INTERNAL_" + str(j)][1]
-                )
+                if row["PRIMER_INTERNAL_NUM_RETURNED"]:
+                    amplicon["PRIMER_INTERNAL_REGION"] = "{}:{}-{}".format(
+                        row["CHROMOSOME"],
+                        row["PRIMER_INTERNAL_" + str(j)][0] + row["REF_OFFSET"],
+                        row["PRIMER_INTERNAL_" + str(j)][0] + row["REF_OFFSET"] + row["PRIMER_INTERNAL_" + str(j)][1]
+                    )
                 amplicon["PRIMER_RIGHT_REGION"] = "{}:{}-{}".format(
                     row["CHROMOSOME"],
                     row["PRIMER_RIGHT_" + str(j)][0] + row["REF_OFFSET"] - row["PRIMER_RIGHT_" + str(j)][1] + 1,
