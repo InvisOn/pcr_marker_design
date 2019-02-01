@@ -71,6 +71,7 @@ class PrimerDesign:
         }
         
         """
+        
         # Set the reference, annotations and description using the setter methods
         self.reference = reference_file
         self.description = description
@@ -134,11 +135,7 @@ class PrimerDesign:
         if p3_globals:
             self.p3_globals.update(p3_globals)
         
-        # If no target file is given, create one using self.gettargets()
         if not targets_file:
-            # Need to modify the region here in final code
-#             self.gettargets(write="targets.bed")
-#             self.targets = "targets.bed"
             self._have_targets = False
         else:
             self.targets = targets_file
@@ -148,6 +145,8 @@ class PrimerDesign:
             self.output_dir = "./"
         else:
             self.output_dir = output_dir
+            if self.output_dir != "stdout":
+                os.mkdir(self.output_dir)
     
     # Getter end setter methods
     # Use hidden attributes to hold the Wrapper onjects for each file
@@ -267,9 +266,6 @@ Make sure to use targets that were designed with the same amplicon and primer si
             for i in range(0, self.p3_globals['PRIMER_NUM_RETURN']):
                 for key in each:
                     columns.append(key.replace("0", str(i)))
-            
-            # Print the header of the csv
-            print("\"{}\"".format("\",\"".join(columns)))
             
             if not region:
                 for targ in self.targets.fetch():
@@ -406,7 +402,9 @@ Make sure to use targets that were designed with the same amplicon and primer si
         
     def gettargets(self, region=None, write=False):
         """
-        pass
+        Create targets in the specified region.
+        Return a list if write=False or write it to a file named using the
+        write parameter.
         """
         l = [[False,0,0]]
         l2 = [['CHR','START','END']]

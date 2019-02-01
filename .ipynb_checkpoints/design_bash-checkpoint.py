@@ -37,10 +37,6 @@ def design_primers(args):
             else:
                 region[reg.chrom] = [[int(reg.start), int(reg.stop)]]
     
-    
-#     for arg in vars(args):
-#         print("{}={}".format(arg, getattr(args, arg)))
-    
     # Set the default primer3 parameters
     p3_globals = {
         'PRIMER_OPT_SIZE': 20,
@@ -85,6 +81,18 @@ def design_primers(args):
     
     # If the -i flag was specifyed use the stream from stdin as targets
     if args.interactive:
+        if args.output_directory == "stdout":
+            columns = [
+                    'REF_OFFSET', 'CHROMOSOME', 'PRIMER_LEFT_EXPLAIN', 'PRIMER_RIGHT_EXPLAIN', 'PRIMER_INTERNAL_EXPLAIN', 'PRIMER_PAIR_EXPLAIN', 'PRIMER_LEFT_NUM_RETURNED', 'PRIMER_RIGHT_NUM_RETURNED', 'PRIMER_INTERNAL_NUM_RETURNED', 'PRIMER_PAIR_NUM_RETURNED'
+                ]
+            each = [
+                    'PRIMER_PAIR_0_PENALTY', 'PRIMER_LEFT_0_PENALTY', 'PRIMER_RIGHT_0_PENALTY', 'PRIMER_INTERNAL_0_PENALTY', 'PRIMER_LEFT_0_SEQUENCE', 'PRIMER_RIGHT_0_SEQUENCE', 'PRIMER_INTERNAL_0_SEQUENCE', 'PRIMER_LEFT_0', 'PRIMER_RIGHT_0', 'PRIMER_INTERNAL_0', 'PRIMER_LEFT_0_TM', 'PRIMER_RIGHT_0_TM', 'PRIMER_INTERNAL_0_TM', 'PRIMER_LEFT_0_GC_PERCENT', 'PRIMER_RIGHT_0_GC_PERCENT', 'PRIMER_INTERNAL_0_GC_PERCENT', 'PRIMER_LEFT_0_SELF_ANY_TH', 'PRIMER_RIGHT_0_SELF_ANY_TH', 'PRIMER_INTERNAL_0_SELF_ANY_TH', 'PRIMER_LEFT_0_SELF_END_TH', 'PRIMER_RIGHT_0_SELF_END_TH', 'PRIMER_INTERNAL_0_SELF_END_TH', 'PRIMER_LEFT_0_HAIRPIN_TH', 'PRIMER_RIGHT_0_HAIRPIN_TH', 'PRIMER_INTERNAL_0_HAIRPIN_TH', 'PRIMER_LEFT_0_END_STABILITY', 'PRIMER_RIGHT_0_END_STABILITY', 'PRIMER_PAIR_0_COMPL_ANY_TH', 'PRIMER_PAIR_0_COMPL_END_TH', 'PRIMER_PAIR_0_PRODUCT_SIZE'
+                ]
+            for i in range(0, p3_globals['PRIMER_NUM_RETURN']):
+                for key in each:
+                    columns.append(key.replace("0", str(i)))
+
+            print("\"{}\"".format("\",\"".join(columns)))
         for line in sys.stdin:
             target = pb.BedTool(line, from_string=True)
             designer.targets = target.fn
@@ -93,6 +101,18 @@ def design_primers(args):
         if args.output_directory != "stdout":
             designer.cleanoutput()
     else:
+        if args.output_directory == "stdout":
+            columns = [
+                    'REF_OFFSET', 'CHROMOSOME', 'PRIMER_LEFT_EXPLAIN', 'PRIMER_RIGHT_EXPLAIN', 'PRIMER_INTERNAL_EXPLAIN', 'PRIMER_PAIR_EXPLAIN', 'PRIMER_LEFT_NUM_RETURNED', 'PRIMER_RIGHT_NUM_RETURNED', 'PRIMER_INTERNAL_NUM_RETURNED', 'PRIMER_PAIR_NUM_RETURNED'
+                ]
+            each = [
+                    'PRIMER_PAIR_0_PENALTY', 'PRIMER_LEFT_0_PENALTY', 'PRIMER_RIGHT_0_PENALTY', 'PRIMER_INTERNAL_0_PENALTY', 'PRIMER_LEFT_0_SEQUENCE', 'PRIMER_RIGHT_0_SEQUENCE', 'PRIMER_INTERNAL_0_SEQUENCE', 'PRIMER_LEFT_0', 'PRIMER_RIGHT_0', 'PRIMER_INTERNAL_0', 'PRIMER_LEFT_0_TM', 'PRIMER_RIGHT_0_TM', 'PRIMER_INTERNAL_0_TM', 'PRIMER_LEFT_0_GC_PERCENT', 'PRIMER_RIGHT_0_GC_PERCENT', 'PRIMER_INTERNAL_0_GC_PERCENT', 'PRIMER_LEFT_0_SELF_ANY_TH', 'PRIMER_RIGHT_0_SELF_ANY_TH', 'PRIMER_INTERNAL_0_SELF_ANY_TH', 'PRIMER_LEFT_0_SELF_END_TH', 'PRIMER_RIGHT_0_SELF_END_TH', 'PRIMER_INTERNAL_0_SELF_END_TH', 'PRIMER_LEFT_0_HAIRPIN_TH', 'PRIMER_RIGHT_0_HAIRPIN_TH', 'PRIMER_INTERNAL_0_HAIRPIN_TH', 'PRIMER_LEFT_0_END_STABILITY', 'PRIMER_RIGHT_0_END_STABILITY', 'PRIMER_PAIR_0_COMPL_ANY_TH', 'PRIMER_PAIR_0_COMPL_END_TH', 'PRIMER_PAIR_0_PRODUCT_SIZE'
+                ]
+            for i in range(0, p3_globals['PRIMER_NUM_RETURN']):
+                for key in each:
+                    columns.append(key.replace("0", str(i)))
+
+            print("\"{}\"".format("\",\"".join(columns)))
         if not args.targets:
             designer.gettargets(region=region, write="targets.bed")
             designer.targets = "targets.bed"
