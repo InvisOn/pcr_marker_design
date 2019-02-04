@@ -11,8 +11,7 @@ from design import *
 reference = "/output/genomic/plant/Actinidia/chinensis/CK51F3_01/Genome/Assembly/PS1/1.68.5/AllChromosomes/PS1.1.68.5.fasta"
 annotations = "/output/genomic/plant/Actinidia/chinensis/Resequencing/Variants/PS1.1.68.5/52DiploidGenomes/Combined_diploidCK_basic_NS30_Q50_SAFR3_DP50_PAIR0.8_PS1.1.68.5_ann.vcf.gz"
 description = "PS1.1.68.5"
-targets = "test_targets.bed"
-# targets = "./test/test-data/targets.bed"
+targets = "./test/test-data/targets.bed"
     
 
 def test_PrimerDesign_init():
