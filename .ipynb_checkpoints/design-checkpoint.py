@@ -145,7 +145,7 @@ class PrimerDesign:
             self.output_dir = "./"
         else:
             self.output_dir = output_dir
-            if self.output_dir != "stdout":
+            if self.output_dir != "stdout" and not os.path.isdir(self.output_dir):
                 os.mkdir(self.output_dir)
     
     # Getter end setter methods
@@ -328,16 +328,18 @@ Make sure to use targets that were designed with the same amplicon and primer si
                 amplicon.index = [X.replace("_" + str(j), "") for X in amplicon.index]
                 self.amplicons_df = self.amplicons_df.append(amplicon, ignore_index=True)
                 
-                primer_left = row.loc[
-                    ((not any((str(Y) in X for Y in range(0, 10))) or "LEFT_{}".format(str(j)) in X) 
-                     for X in row.index)
-                ]
+                primer_left = row.loc[((not (any(str(Y) in X for Y in range(0, 10))
+                                             or "NUM" in X
+                                             or "EXPLAIN" in X)
+                                        or ("LEFT_{}".format(str(j)) in X))
+                                       for X in row.index)]
                 primer_left["START"] = row["PRIMER_LEFT_" + str(j)][0] + row["REF_OFFSET"]
                 primer_left["END"] = row["PRIMER_LEFT_" + str(j)][0] + row["REF_OFFSET"] + row["PRIMER_LEFT_" + str(j)][1]
-                primer_right = row.loc[
-                    ((not any((str(Y) in X for Y in range(0, 10))) or "RIGHT_{}".format(str(j)) in X) 
-                     for X in row.index)
-                ]
+                primer_right = row.loc[((not (any(str(Y) in X for Y in range(0, 10))
+                                              or "NUM" in X
+                                              or "EXPLAIN" in X)
+                                         or "RIGHT_{}".format(str(j)) in X)
+                                        for X in row.index)]
                 primer_right["START"] = row["PRIMER_RIGHT_" + str(j)][0] + row["REF_OFFSET"] - row["PRIMER_RIGHT_" + str(j)][1] + 1
                 primer_right["END"] = row["PRIMER_RIGHT_" + str(j)][0] + row["REF_OFFSET"] + 1
                 primer_right.index = [X.replace("_RIGHT_" + str(j), "") for X in primer_right.index]

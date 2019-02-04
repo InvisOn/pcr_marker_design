@@ -64,7 +64,6 @@ def design_primers(args):
     
     # Modify p3_globals if specified
     if args.p3_globals:
-        
         # Get dictionnary from string and update p3_globals
         p3_globals.update(ast.literal_eval(args.p3_globals))
         
@@ -77,7 +76,7 @@ def design_primers(args):
                             output_dir=args.output_directory,
                             amplicon_size_range=args.amplicon_size_range,
                             primer_size_range=args.primer_size_range,
-                            p3_globals=args.p3_globals)
+                            p3_globals=p3_globals)
     
     # If the -i flag was specifyed use the stream from stdin as targets
     if args.interactive:
