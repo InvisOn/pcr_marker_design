@@ -1,5 +1,8 @@
 #! /usr/bin/python
 
+# Just a small script to use the PrimerDesign class from the shell
+# and set all the parameters for recurring use.
+
 
 # IMPORTS
 
@@ -45,6 +48,8 @@ region = {"CHR1":[[0, 5000]]}
 
 
 # EXECUTION
+
+# For more detail on the different possiblities go to Example/Example.ipynb
 
 d = PrimerDesign(reference_file,
                  description, 
